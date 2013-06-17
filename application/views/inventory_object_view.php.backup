@@ -1,0 +1,52 @@
+<script>
+
+$(document).ready(function(){
+    var city = "Thanjavur";
+    var value = $("#field-markedForDeletion option:contains("+city+")").attr('selected', 'selected');
+    $(".chosen-select").val(city);
+    $(".chosen-select").trigger("liszt:updated");
+
+$("#table_fields").multiselect({  
+   selectedText: "# de # seleccionats",
+   noneSelectedText: "camps",
+   checkAllText: "Marcar tots",
+   uncheckAllText: "Desmarcar tots",
+   minWidth: "250"
+   });
+
+var valArr = ["inventory_objectId","publicId","externalID"];
+ 
+/* Below Code Matches current object's (i.e. option) value with the array values */
+/* Returns -1 if match not found */
+$("#table_fields").multiselect("widget").find(":checkbox").each(function(){
+       if(jQuery.inArray(this.value, valArr) !=-1)
+       this.click();              
+});   
+
+$('#table_fields').change(function(){
+    alert($(this).val());
+    });
+
+});
+
+</script>
+
+<br/>
+Camps a mostrar:
+<select id="table_fields" multiple>
+
+<?php foreach($fields_in_table as $field): ?>
+    <option value="<?php echo $field; ?>" ><?php echo $field; ?></option>
+<?php endforeach; ?>
+    
+</select>
+<br/>
+   
+<!-- End of header-->
+    <div style='height:30px;'></div>  
+    <div style="margin:10px;">
+        <?php echo $output; ?>
+    </div>
+
+</body>
+
