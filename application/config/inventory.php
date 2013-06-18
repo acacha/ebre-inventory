@@ -9,7 +9,7 @@
 | 
 | Example: Institut de l'Ebre
 */
-$config['institution_name']	= "Institut de l'Ebre";
+$config['institution_name']	= "Institut Montsià";
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +55,17 @@ $config['default_moneysourceid']	= 1;
 | Example: 1
 */
 $config['default_provider']	= 1;
+
+/*
+|--------------------------------------------------------------------------
+| Default material id
+|--------------------------------------------------------------------------
+|
+| Database Id of the default material ID
+| 
+| Example: 1
+*/
+$config['default_materialid']	= 1;
 
 /*
 |--------------------------------------------------------------------------
