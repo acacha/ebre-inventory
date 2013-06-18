@@ -220,19 +220,14 @@ class Main extends CI_Controller {
         
         //<i class="icon-large icon-qrcode"></i>
 	
-
+		//TODO!!!!!!
 		if(isset($_GET['idioma'])){
 			$idioma=$_GET['idioma'];
 			$_SESSION['idioma'] = $idioma;
 			$this->grocery_crud->set_language($_SESSION['idioma']);
 		}
 		
-		if(isset($_GET['tamany_get'])){
-			$_SESSION['tamany']= $_GET['tamany_get'];
-		}
-		
-		
-        $this->grocery_crud->set_table('inventory_object');
+		$this->grocery_crud->set_table('inventory_object');
         
         //Exemples de com canviar l'idioma
         //$this->grocery_crud->set_language("catalan"); 
@@ -273,6 +268,9 @@ class Main extends CI_Controller {
         
         //ExternID types
         $this->grocery_crud->set_relation('externalIDType','externalIDType','{externalIDTypeID} - {name}',array('markedForDeletion' => 'n'));
+        
+        //MATERIAL RELATION
+        $this->grocery_crud->set_relation('materialId','material','{material}',array('markedForDeletion' => 'n'));
         
         //ORGANIZATIONAL UNIT
         $this->grocery_crud->set_relation_n_n('OwnerOrganizationalUnit', 'inventory_object_organizational_unit', 'organizational_unit', 'organitzational_unitId', 'inventory_objectId', 'name','priority');
