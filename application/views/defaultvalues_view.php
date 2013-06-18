@@ -4,6 +4,26 @@ $(document).ready(function(){
  
  //SELECT DEFAULT VALUES
  
+ //creationUserId
+ if (document.getElementById('field-creationUserId') != null) {
+  var location = document.getElementById('field-creationUserId');
+  document.getElementById('field-creationUserId').disabled = true;
+  if (location.value == "") {
+   location.value = <?php echo $defaultcreationUserId ?>;	 
+  }
+  $('#field-creationUserId').trigger('liszt:updated');
+ }
+ 
+ //lastupdateUserId
+ if (document.getElementById('field-lastupdateUserId') != null) {
+  var location = document.getElementById('field-lastupdateUserId');
+  document.getElementById('field-lastupdateUserId').disabled = true;
+  if (location.value == "") {
+   location.value = <?php echo $defaultcreationUserId ?>;	 
+  }
+  $('#field-lastupdateUserId').trigger('liszt:updated');
+ }
+ 
  //EXTERNAL ID TYPE
  if (document.getElementById('field-externalIDType') != null) {
   var eit = document.getElementById('field-externalIDType');
@@ -41,6 +61,15 @@ $(document).ready(function(){
   }
  }
  
+ //MATERIAL
+ if (document.getElementById('field-parentMaterialId') != null) {
+  var parentMaterialId = document.getElementById('field-parentMaterialId');
+  if (parentMaterialId.value == "") {
+   document.getElementById('field-parentMaterialId').value = <?php echo $defaultfieldparentMaterialId ?>;
+   $('#field-parentMaterialId').trigger('liszt:updated');
+  }
+ }
+ 
  //PRESERVATION STATE
  if (document.getElementById('field-preservationState') != null) {
   var ps = document.getElementById('field-preservationState');
@@ -65,6 +94,17 @@ $(document).ready(function(){
   mfd.options[2].text='<?php echo $yes_translated ?>';
   $('#field-markedForDeletion').trigger('liszt:updated');
  }
+ 
+ //DISABLE markedForDeletionDate
+ var $markedForDeletion = $('#field-markedForDeletion');
+ var $markedForDeletionDate = $('#field-markedForDeletionDate');
+ $markedForDeletion.change(function () {
+    if ($markedForDeletion.val() == 'y') {
+	    $markedForDeletionDate.removeAttr('disabled'); 
+    } else {
+		$markedForDeletionDate.attr('disabled', 'disabled').val('');
+	}
+ }).trigger('change'); // added trigger to calculate initial state
  
 
   //$('#field-manualEntryDate').datetimepicker('setTime','16:55');

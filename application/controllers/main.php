@@ -214,8 +214,8 @@ class Main extends CI_Controller {
 			redirect($this->login_page, 'refresh');
 		}
 		
-        $this->grocery_crud->add_action(lang('Images'),'/codeigniter/assets/img/images.png', '/main/images');
-        $this->grocery_crud->add_action(lang('QRCode'),'/codeigniter/assets/img/qr_code.png', '/qr/generate');
+        $this->grocery_crud->add_action(lang('Images'),base_url('assets/img/images.png'), '/main/images');
+        $this->grocery_crud->add_action(lang('QRCode'),base_url('assets/img/qr_code.png'), '/qr/generate');
                 
         
         //<i class="icon-large icon-qrcode"></i>
@@ -269,8 +269,7 @@ class Main extends CI_Controller {
         $this->grocery_crud->required_fields('name','shortName','location','markedForDeletion');
         //$this->grocery_crud->required_fields('externalCode','name','shortName','location','markedForDeletion');
 
-        
-        //Relations within tables
+        $this->grocery_crud->unset_add_fields('last_update','manualLast_update');
         
         //ExternID types
         $this->grocery_crud->set_relation('externalIDType','externalIDType','{externalIDTypeID} - {name}',array('markedForDeletion' => 'n'));
@@ -294,10 +293,10 @@ class Main extends CI_Controller {
 		
 		$this->grocery_crud->callback_add_field('quantityInStock',array($this,'add_field_callback_quantityInStock'));
 		
-		//CREATTION USER ID
+		//CREATION USER ID
     	//DEFAULT VALUE= LOGGED USER. ONLY WHEN ADDING
 		//EDITING: SHOW CURRENT VALUE READONLY
-        $this->grocery_crud->callback_add_field('creationUserId',array($this,'add_field_callback_creationUserId'));
+        //$this->grocery_crud->callback_add_field('creationUserId',array($this,'add_field_callback_creationUserId'));
         $this->grocery_crud->callback_edit_field('creationUserId',array($this,'edit_field_callback_creationUserId'));
 		
 		
@@ -323,6 +322,12 @@ class Main extends CI_Controller {
 		
 	
         $this->grocery_crud->set_field_upload('file_url','assets/uploads/files');
+        
+        //USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
         
         $output = $this->grocery_crud->render();
         
@@ -370,12 +375,17 @@ class Main extends CI_Controller {
 			redirect($this->login_page, 'refresh');
 		}
 		
+		//print_r($this->session->all_userdata());
+		//echo "user_id: " . $this->session->userdata('user_id');
+		$defaultvalues['defaultcreationUserId']= $this->session->userdata('user_id');
+		
 		$defaultvalues['defaultfieldexternalIDType']= $this->config->item('default_externalID_type');
 		$defaultvalues['defaultfieldlocation']= $this->config->item('default_location');
      	$defaultvalues['defaultfieldmoneysourceid']= $this->config->item('default_moneysourceid');
      	$defaultvalues['defaultfieldpreservationstate']= $this->config->item('default_preservationState');
      	$defaultvalues['defaultfieldprovider']= $this->config->item('default_provider');
      	$defaultvalues['defaultfieldmarkedfordeletion']= $this->config->item('default_markedfordeletionvalue');
+     	$defaultvalues['defaultfieldparentMaterialId']= $this->config->item('default_materialid');
 
      	//TRANSLATIONS:
      	$defaultvalues['good_translated']= lang('Good');
@@ -406,11 +416,7 @@ class Main extends CI_Controller {
     return '<input id="field-quantityInStock" type="text" maxlength="6" value="1" name="quantityInStock">';
     }
     
-    function add_field_callback_creationUserId(){
-     return '<input type="text" maxlength="11" class="numeric" value="' . $this->session->userdata('session_id')  . '" name="creationUserId" id="field-creationUserId" readonly> ';
-    }
-	
-	function edit_field_callback_creationUserId($value, $primary_key){
+    function edit_field_callback_creationUserId($value, $primary_key){
      return '<input type="text" maxlength="11" class="numeric" value="' . $value  . '" name="creationUserId" id="field-creationUserId" readonly> ';
     }
     
@@ -423,6 +429,10 @@ class Main extends CI_Controller {
 	  return '<input type="text" class="datetime-input hasDatepicker" maxlength="19" value="'. date('d/m/Y H:i:s', strtotime($value)) .'" name="entryDate" id="field-entryDate" readonly>';    
     }
     
+    function edit_field_callback_lastupdate($value, $primary_key){
+	  return '<input type="text" class="datetime-input hasDatepicker" maxlength="19" value="'. date('d/m/Y H:i:s', strtotime($value)) .'" name="entryDate" id="field-last_update" readonly>';    	
+	}
+    
     function add_callback_last_update(){  
 	 return '<input type="text" class="datetime-input hasDatepicker" maxlength="19" name="last_update" id="field-last_update" readonly>';
     }
@@ -431,14 +441,14 @@ class Main extends CI_Controller {
 	 return '<input type="text" class="datetime-input hasDatepicker" maxlength="19" value="'. date('d/m/Y H:i:s', strtotime($value)) .'"  name="last_update" id="field-last_update" readonly>';
     }
     
-    
     //UPDATE AUTOMATIC FIELDS BEFORE INSERT
     function before_insert_object_callback($post_array, $primary_key) {
 		//UPDATE LAST UPDATE FIELD
 		$data= date('d/m/Y H:i:s', time());
 		$post_array['last_update'] = $data;
 		
-		$post_array['lastupdateUserId'] = $this->session->userdata('session_id');
+		$post_array['creationUserId'] = $this->session->userdata('user_id');
+		$post_array['lastupdateUserId'] = $this->session->userdata('user_id');
 		return $post_array;
     }
     
@@ -476,18 +486,32 @@ class Main extends CI_Controller {
                                                          
         //Camps obligatoris
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
-
-        //Camps last update no editable i automàtic        
-        $this->grocery_crud->callback_add_field('last_update',array($this,'add_field_callback_last_update'));
-        
+ 
         //CALLBACKS        
         $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
         $this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
         
+        //Camps last update no editable i automàtic        
+        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
+        
+        //USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+		
+        //UPDATE AUTOMATIC FIELDS
+		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
+		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+		
+		$this->grocery_crud->unset_add_fields('last_update');
+		
         $output = $this->grocery_crud->render();
            
         $this->load_header($output);        
 
+		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+        $this->load->view('defaultvalues_view.php',$this->get_default_values()); 
         $this->load->view('externalid_view.php',$output);
         
 	    $this->load->view('include/footer');                        
@@ -527,10 +551,28 @@ class Main extends CI_Controller {
         $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
         $this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
         
+        //Camps last update no editable i automàtic        
+        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
+        
+        //UPDATE AUTOMATIC FIELDS
+		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
+		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+        
+   		$this->grocery_crud->unset_add_fields('last_update');
+   		
+   		//USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+
+        
         $output = $this->grocery_crud->render();
            
         $this->load_header($output);        
 
+		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+        $this->load->view('defaultvalues_view.php',$this->get_default_values()); 
         $this->load->view('organizational_unit_view.php',$output);
         
 	    $this->load->view('include/footer');                        
@@ -551,6 +593,19 @@ class Main extends CI_Controller {
         //ESTABLISH SUBJECT
         $this->grocery_crud->set_subject(lang('location_subject'));                
         
+        //Camps obligatoris
+        $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+        //CALLBACKS        
+        $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
+        $this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
+        
+        //Camps last update no editable i automàtic        
+        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
+        
+        //Camps last update no editable i automàtic        
+        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
+        
         //COMMON_COLUMNS               
         $this->set_common_columns_name();
                
@@ -559,10 +614,25 @@ class Main extends CI_Controller {
         
         //Relacions entre taules
         $this->grocery_crud->set_relation('parentLocation','location','{locationId} - {name}',array('markedForDeletion' => 'n'));
+        
+         //UPDATE AUTOMATIC FIELDS
+		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
+		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+        
+        $this->grocery_crud->unset_add_fields('last_update');
+        
+   		
+   		//USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
                    
         $output = $this->grocery_crud->render();
         
         $this->load_header($output);
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+        $this->load->view('defaultvalues_view.php',$this->get_default_values()); 
         $this->load->view('grocerycrud_view.php',$output);
                 
         $this->load->view('include/footer');                            
@@ -580,19 +650,45 @@ public function material()
         
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('material_subject'));
+       
+       //Camps obligatoris
+        $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
                
        //COMMON_COLUMNS                 
        $this->set_common_columns_name();
 
        //SPECIFIC COLUMNS
        $this->grocery_crud->display_as('parentMaterialId',lang('parentMaterialId'));
-                                        
        
+       //Parent Material
+       $this->grocery_crud->set_relation('parentMaterialId','material','{name}',array('markedForDeletion' => 'n'));
+                                        
+       //CALLBACKS        
+        $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
+        $this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
+        
+        //Camps last update no editable i automàtic        
+        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
+        
+        //UPDATE AUTOMATIC FIELDS
+		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
+		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+        
+   		$this->grocery_crud->unset_add_fields('last_update');
+   		
+   		
+   		//USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
         
        $output = $this->grocery_crud->render();
 
 
-        $this->load_header($output);                     
+        $this->load_header($output);          
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+        $this->load->view('defaultvalues_view.php',$this->get_default_values());            
         $this->load->view('material_view.php',$output); 
         $this->load->view('include/footer');                            
 } 
@@ -607,14 +703,38 @@ public function provider()
        $this->grocery_crud->set_table($this->current_table);                          
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('provider_subject'));
+       
+       //Camps obligatoris
+        $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
                               
        //COMMON_COLUMNS                 
        $this->set_common_columns_name();
                                             
+        //CALLBACKS        
+        $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
+        $this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
+        
+        //Camps last update no editable i automàtic        
+        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
+        
+        //UPDATE AUTOMATIC FIELDS
+		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
+		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+        
+   		$this->grocery_crud->unset_add_fields('last_update');
+   		
+   		
+   		//USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        
                                                           
        $output = $this->grocery_crud->render(); 
                                                    
        $this->load_header($output);
+       $this->load->view('defaultvalues_view.php',$this->get_default_values()); 
        $this->load->view('provider_view.php',$output);
        $this->load->view('include/footer');
 }
@@ -630,14 +750,36 @@ public function money_source()
         $this->grocery_crud->set_table($this->current_table);  
         //ESTABLISH SUBJECT
         $this->grocery_crud->set_subject(lang('money_source_id_subject'));
+        
+        //Camps obligatoris
+        $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
                                      
         //COMMON_COLUMNS                 
         $this->set_common_columns_name();
+        
+        //CALLBACKS        
+        $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
+        $this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
+        
+        //Camps last update no editable i automàtic        
+        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
+        
+        //UPDATE AUTOMATIC FIELDS
+		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
+		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+		
+		//USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+		        
+   		$this->grocery_crud->unset_add_fields('last_update');
                                                            
         $output = $this->grocery_crud->render();
                 
         $this->load_header($output);
-                       
+        $this->load->view('defaultvalues_view.php',$this->get_default_values()); 
         $this->load->view('money_source_view.php',$output);
         $this->load->view('include/footer');
 }
