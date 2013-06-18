@@ -1,0 +1,4 @@
+CREATE DATABASE ebreinventory;
+CREATE USER 'ebreinventory'@'localhost' IDENTIFIED BY 'PUT_YOUR_PASSWORD_HERE';
+GRANT ALL PRIVILEGES ON ebreinventory.* TO 'ebreinventory'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
