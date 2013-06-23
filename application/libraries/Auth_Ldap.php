@@ -93,11 +93,12 @@ class Auth_Ldap {
         $user_info = $this->_authenticate($username,$password);
         
         if(!$user_info) {
-			return FALSE;
+			return -1;
 		}
         if(empty($user_info['role'])) {
             log_message('info', $username.lang('has_no_role_to_play'));
-            show_error($username.lang('successfully_authenticated_but_no_role'));
+            //show_error($username.lang('successfully_authenticated_but_no_role'));
+            return -2;
         }
         // Record the login
         $this->_audit(lang('succesful_login').$user_info['cn']." (".$username.") ". lang('from_ip') . " " .$this->ci->input->ip_address());
@@ -109,7 +110,7 @@ class Auth_Ldap {
                             'logged_in' => TRUE);
     
         $this->ci->session->set_userdata($customdata);
-        return TRUE;
+        return 1;
     }
 
     /**
