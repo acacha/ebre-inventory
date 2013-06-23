@@ -296,3 +296,45 @@ ALTER TABLE `users_groups`
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de la taula `brand`
+--
+
+CREATE TABLE IF NOT EXISTS `brand` (
+  `brandId` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) NOT NULL,
+  `shortName` varchar(150) NOT NULL,
+  `description` text,
+  `entryDate` datetime NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `creationUserId` int(11) DEFAULT NULL,
+  `lastupdateUserId` int(11) DEFAULT NULL,
+  `markedForDeletion` enum('n','y') NOT NULL,
+  `markedForDeletionDate` datetime NOT NULL,
+  PRIMARY KEY (`brandId`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de la taula `model`
+--
+
+CREATE TABLE IF NOT EXISTS `model` (
+  `modelId` int(11) NOT NULL AUTO_INCREMENT,
+  `brandId` int(11) DEFAULT NULL,
+  `name` varchar(150) NOT NULL,
+  `shortName` varchar(150) NOT NULL,
+  `description` text,
+  `entryDate` datetime NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `creationUserId` int(11) DEFAULT NULL,
+  `lastupdateUserId` int(11) DEFAULT NULL,
+  `markedForDeletion` enum('n','y') NOT NULL,
+  `markedForDeletionDate` datetime NOT NULL,
+  PRIMARY KEY (`modelId`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
