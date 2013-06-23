@@ -179,3 +179,5 @@ $lang['grocerycrud_state_ajax_relation_n_n']="Relació Ajax n_n";
 $lang['grocerycrud_state_exit']="Èxit";
 $lang['grocerycrud_state_exporting']="Exportant";
 $lang['grocerycrud_state_printing']="Imprimint";
+
+$lang['login_unsuccessful_not_allowed_role'] = "El login és correcte però l'usuari no té un rol adequat per accedir a l'aplicació";

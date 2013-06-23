@@ -17,7 +17,7 @@
 
 // Errors & LOGS
 $lang['php_ldap_notpresent']='No està instal\·lada la funcionalitat de Ldap per PHP. Activeu el mòdul Ldap de PHP o utilitzeu un PHP amb suport per a Ldap compilat.';
-$lang['successfully_authenticated_but_no_role']=" autenticat correctament, però no es permet l'accés perquè l'usuari no pertany a cap grup amb permisos per accedir";
+$lang['successfully_authenticated_but_no_role']=" autenticat correctament, però no es permet l'accés perquè l'usuari no pertany a cap grup amb permisos per accedir a l'aplicació";
 $lang['error_opening_audit_log']='Error obrint el log audit';
 $lang['error_connecting_to']='Error connectant a';
 $lang['could_not_connect_to_ldap']="No es pot connectar a cap dels servidors Ldap...";

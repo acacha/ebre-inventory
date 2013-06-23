@@ -62,13 +62,25 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 			$this->set_error('login_unsuccessful');
 			return FALSE;
 		}
+		$return_value=$this->auth_ldap->login($identity, $password);
 		
-		if (!$this->auth_ldap->login($identity, $password)) {
-			$this->increase_login_attempts($identity);
-			$this->trigger_events('post_login_unsuccessful');
-			$this->set_error('login_unsuccessful');
-			return FALSE;
+		switch ($return_value) {
+			case 1:
+				break;
+			case -1:
+				$this->increase_login_attempts($identity);
+				$this->trigger_events('post_login_unsuccessful');
+				$this->set_error('login_unsuccessful');
+				return FALSE;
+				break;
+			case -2:
+				$this->increase_login_attempts($identity);
+				$this->trigger_events('post_login_unsuccessful');
+				$this->set_error('login_unsuccessful_not_allowed_role');	
+				return FALSE;
+				break;
 		}
+		
 		//AT THIS POINT USER HAS LOGGED CORRECTLY AT LDAP
 		
 		//CHECK IF ACCOUNT HAS TO BE LOCKED BY TOO MANY AUTH ATTEMPTS
