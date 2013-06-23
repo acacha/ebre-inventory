@@ -54,6 +54,12 @@ class Inventory_errors extends CI_Controller {
         $this->load->view('include/footer');   	
 	}
 	
+	function tablenotfound()	{
+		$this->load_header();
+        $this->load->view('tablenotfound.php');        
+        $this->load->view('include/footer');   	
+	}
+	
 	
 
 

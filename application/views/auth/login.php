@@ -57,6 +57,18 @@
             $('.selectpicker').selectpicker();
             $('.selectpicker').val('<?php echo $this->session->userdata('default_realm')?>');
             $('.selectpicker').change();
+            
+            <?php if ($this->session->userdata('maintenance_mode')): ?>
+$('#maintenance-mode-message').html("<?php echo lang('maintenance_mode_message');?>");
+var realms_select = document.getElementById("realms");
+$("option").attr("disabled", "disabled");
+realms_select.options[realms_select.options.length] = new Option('<?php echo lang('maintenance_mode');?>','maintenance_mode');
+identity
+$('.selectpicker').val('maintenance_mode');
+$('.selectpicker').selectpicker('refresh');		
+			<?php endif; ?>
+
+            
         });
     </script>
 
@@ -67,6 +79,8 @@
 	
 <div class="container">	
 
+     <center><div id="maintenance-mode-message" class="text-error"></div></center>
+     
      <center><div class="text-error"><?php echo $message;?></div></center>
      
 
@@ -80,7 +94,7 @@
          <input id="identity" class="input-block-level" type="text" placeholder="<?php echo lang('User');?>" name="identity">
          <input id="password" class="input-block-level" type="password" placeholder="<?php echo lang('Password');?>" name="password">
          
-         <select class="selectpicker" name="realm">
+         <select id="realms" class="selectpicker" name="realm">
   		  <?php foreach( (array) $this->session->userdata('realms') as $realm): ?>
            <option value="<?php echo $realm; ?>" ><?php echo $realm; ?></option>
           <?php endforeach; ?>	
