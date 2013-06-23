@@ -20,10 +20,7 @@ class Reports extends CI_Controller {
         //Table library: helps creting html tables
         
         $this->load->library('table');
-                
-
-		session_start();
-	
+               	
         //Localization:       
         //TODO: Session variable with selected language
         $this->lang->load('inventory', 'catalan');	       

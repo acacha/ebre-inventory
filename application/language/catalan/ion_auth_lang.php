@@ -1,61 +1,54 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* Name:  Ion Auth Lang - English
+* Name:  Ion Auth Lang - Catalan
+* 
+* Author: Wilfrido García Espinosa
+* 		  contacto@wilfridogarcia.com
+*         @wilfridogarcia
 *
-* Author: Ben Edmunds
-* 		  ben.edmunds@gmail.com
-*         @benedmunds
-*
+* Translation: Oriol Navascuez
+* 
 * Location: http://github.com/benedmunds/ion_auth/
-*
-* Created:  03.14.2010
-*
-* Description:  English language file for Ion Auth messages and errors
-*
+*          
+* Created:  05.04.2010 
+* 
+* Description:  Catalan language file for Ion Auth messages and errors
+* 
 */
 
 // Account Creation
-$lang['account_creation_successful'] 	  	 = 'Account Successfully Created';
-$lang['account_creation_unsuccessful'] 	 	 = 'Unable to Create Account';
-$lang['account_creation_duplicate_email'] 	 = 'Email Already Used or Invalid';
-$lang['account_creation_duplicate_username'] = 'Username Already Used or Invalid';
+$lang['account_creation_successful']			= 'Compte creat amb èxit';
+$lang['account_creation_unsuccessful']			= 'No ha estat possible crear al compte';
+$lang['account_creation_duplicate_email']		= 'Email en ús o invàlid';
+$lang['account_creation_duplicate_username']	= 'Nom d&#39;usuari en ús o invàlid';
+
 
 // Password
-$lang['password_change_successful'] 	 	 = 'Password Successfully Changed';
-$lang['password_change_unsuccessful'] 	  	 = 'Unable to Change Password';
-$lang['forgot_password_successful'] 	 	 = 'Password Reset Email Sent';
-$lang['forgot_password_unsuccessful'] 	 	 = 'Unable to Reset Password';
+$lang['password_change_successful']				= 'Contrasenya canviada amb èxit';
+$lang['password_change_unsuccessful']			= 'No ha estat possible canviar la contrasenya';
+$lang['forgot_password_successful']				= 'Nova contrasenya enviada per email';
+$lang['forgot_password_unsuccessful']			= 'No ha estat possible crear una nova contrasenya';
 
 // Activation
-$lang['activate_successful'] 		  	     = 'Account Activated';
-$lang['activate_unsuccessful'] 		 	     = 'Unable to Activate Account';
-$lang['deactivate_successful'] 		  	     = 'Account De-Activated';
-$lang['deactivate_unsuccessful'] 	  	     = 'Unable to De-Activate Account';
-$lang['activation_email_successful'] 	  	 = 'Activation Email Sent';
-$lang['activation_email_unsuccessful']   	 = 'Unable to Send Activation Email';
+$lang['activate_successful']					= 'Compte activat';
+$lang['activate_unsuccessful']					= 'No ha estat possible activar el compte';
+$lang['deactivate_successful']					= 'Compte desactivat';
+$lang['deactivate_unsuccessful']				= 'No ha estat possible desactivar el compte';
+$lang['activation_email_successful']			= 'Email d&#39;activació enviat';
+$lang['activation_email_unsuccessful']			= 'No ha estat possible enviar l&#39;email d&#39;activació';
 
 // Login / Logout
-$lang['login_successful'] 		  	         = 'Logged In Successfully';
-$lang['login_unsuccessful'] 		  	     = 'Incorrect Login';
-$lang['login_unsuccessful_not_active'] 		 = 'Account is inactive';
-$lang['login_timeout']                       = 'Temporarily Locked Out.  Try again later.';
-$lang['logout_successful'] 		 	         = 'Logged Out Successfully';
+$lang['login_successful']						= 'Sessió iniciada amb èxit';
+$lang['login_unsuccessful']						= 'No ha estat possible iniciar sessió';
+$lang['logout_successful']						= 'Sessió finalitzada amb èxit';
 
 // Account Changes
-$lang['update_successful'] 		 	         = 'Account Information Successfully Updated';
-$lang['update_unsuccessful'] 		 	     = 'Unable to Update Account Information';
-$lang['delete_successful']               = 'User Deleted';
-$lang['delete_unsuccessful']           = 'Unable to Delete User';
+$lang['update_successful']						= 'Informació del compte actualitzat amb èxit';
+$lang['update_unsuccessful']					= 'No s&#39;ha pogut actualitzar la informació del compte';
+$lang['delete_successful']						= 'Usuari eliminat';
+$lang['delete_unsuccessful']					= 'No s&#39;ha pogut Eliminar l&#39;usuari';
 
-// Groups
-$lang['group_creation_successful']  = 'Group created Successfully';
-$lang['group_already_exists']       = 'Group name already taken';
-$lang['group_update_successful']    = 'Group details updated';
-$lang['group_delete_successful']    = 'Group deleted';
-$lang['group_delete_unsuccessful'] 	= 'Unable to delete group';
-$lang['group_name_required'] 		= 'Group name is a required field';
-
-// Email Subjects
-$lang['email_forgotten_password_subject']    = 'Forgotten Password Verification';
-$lang['email_new_password_subject']          = 'New Password';
-$lang['email_activation_subject']            = 'Account Activation';
+// Email Subjects - TODO Please Translate
+$lang['email_forgotten_password_subject']    = 'Verificació de contrasenya oblidada';
+$lang['email_new_password_subject']          = 'Nova contrasenya';
+$lang['email_activation_subject']            = 'Activació del compte';

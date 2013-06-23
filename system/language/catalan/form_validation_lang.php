@@ -24,7 +24,5 @@ $lang['decimal']                        = 'El camp %s ha de ser un valor decimal
 $lang['less_than']                      = 'El camp %s ha de ser un número menor que %s.';
 $lang['greater_than']           = 'El camp %s ha de ser un número major que %s.';
 
-?>
-
 /* End of file form_validation_lang.php */
 /* Location: ./system/language/english/form_validation_lang.php */

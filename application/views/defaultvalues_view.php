@@ -2,6 +2,14 @@
 
 $(document).ready(function(){
  
+ //CHECK IF WE SET READ ONLY UR HASH (#readonly)
+ if(window.location.hash.indexOf('readonly') != -1){
+   //disable all input html elements:
+   $('#main-table-box').find('input, textarea, button, select').attr('disabled','disabled');
+   //HIDE BUTTONS
+   $('.pDiv').hide();
+ }
+ 
  //SELECT DEFAULT VALUES
  
  //creationUserId
@@ -61,12 +69,39 @@ $(document).ready(function(){
   }
  }
  
- //MATERIAL
+ //PARENT MATERIAL
  if (document.getElementById('field-parentMaterialId') != null) {
   var parentMaterialId = document.getElementById('field-parentMaterialId');
   if (parentMaterialId.value == "") {
    document.getElementById('field-parentMaterialId').value = <?php echo $defaultfieldparentMaterialId ?>;
    $('#field-parentMaterialId').trigger('liszt:updated');
+  }
+ }
+ 
+ //MATERIAL
+ if (document.getElementById('field-materialId') != null) {
+  var parentMaterialId = document.getElementById('field-materialId');
+  if (parentMaterialId.value == "") {
+   document.getElementById('field-materialId').value = <?php echo $defaultfieldMaterialId ?>;
+   $('#field-materialId').trigger('liszt:updated');
+  }
+ }
+ 
+ //BRAND
+ if (document.getElementById('field-brandId') != null) {
+  var parentMaterialId = document.getElementById('field-brandId');
+  if (parentMaterialId.value == "") {
+   document.getElementById('field-brandId').value = <?php echo $defaultfieldBrandId ?>;
+   $('#field-brandId').trigger('liszt:updated');
+  }
+ }
+ 
+ //MODEL
+ if (document.getElementById('field-modelId') != null) {
+  var parentMaterialId = document.getElementById('field-modelId');
+  if (parentMaterialId.value == "") {
+   document.getElementById('field-modelId').value = <?php echo $defaultfieldModelId ?>;
+   $('#field-modelId').trigger('liszt:updated');
   }
  }
  

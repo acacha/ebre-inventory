@@ -27,7 +27,7 @@ $lang['login_identity_label']  = 'Email/Username:';
 $lang['login_password_label']  = 'Password:';
 $lang['login_remember_label']  = 'Remember Me:';
 $lang['login_submit_btn']      = 'Login';
-$lang['login_forgot_password'] = 'Has oblidat la paraula de pas?';
+$lang['login_forgot_password'] = 'Has oblidat la teva paraula de pas?';
 
 // Index
 $lang['index_heading']           = 'Users';

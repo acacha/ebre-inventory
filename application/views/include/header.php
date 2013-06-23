@@ -102,7 +102,7 @@
     <div class="nav-collapse collapse">
             
      <ul class="nav">
-      <li class="active"> <a href='<?php echo site_url('main/inventory')?>'><?php echo lang('inventory');?></a> </li>
+      <li class="active"> <a href='<?php echo site_url('main/inventory_object')?>'><?php echo lang('inventory');?></a> </li>
        <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-toogle="tab"><?php echo lang('devices');?> <b class="caret"></b></a>
         <ul class="dropdown-menu">
@@ -114,10 +114,12 @@
       <li class="dropdown">
        <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-toogle="tab"><?php echo lang('maintenances');?> <b class="caret"></b></a>
        <ul class="dropdown-menu">
-		 <li><a href='<?php echo site_url('main/externalid')?>'><?php echo lang('externalid_menu');?></a></li>
-         <li><a href='<?php echo site_url('main/organizationalunit')?>'><?php echo lang('organizationalunit_menu');?></a></li>
+		 <li><a href='<?php echo site_url('main/externalIDType')?>'><?php echo lang('externalid_menu');?></a></li>
+         <li><a href='<?php echo site_url('main/organizational_unit')?>'><?php echo lang('organizationalunit_menu');?></a></li>
          <li><a href='<?php echo site_url('main/location')?>'><?php echo lang('location_menu');?></a></li>
          <li><a href='<?php echo site_url('main/material')?>'><?php echo lang('material_menu');?></a></li>
+         <li><a href='<?php echo site_url('main/brand')?>'><?php echo lang('brand_menu');?></a></li>
+         <li><a href='<?php echo site_url('main/model')?>'><?php echo lang('model_menu');?></a></li>
          <li><a href='<?php echo site_url('main/provider')?>'><?php echo lang('provider_menu');?></a></li>    
          <li><a href='<?php echo site_url('main/money_source')?>'><?php echo lang('money_source_menu');?></a></li>              
        </ul>                                                                                                                                                                                                                                                                                                                                      
@@ -143,9 +145,9 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang('language');?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="<?=base_url()?>index.php/main/inventory/?idioma=catalan"><?php echo lang('catalan');?></a></li>
-            <li><a href="<?=base_url()?>index.php/main/inventory/?idioma=spanish"><?php echo lang('spanish');?></a></li>
-            <li><a href="<?=base_url()?>index.php/main/inventory/?idioma=english"><?php echo lang('english');?></a></li>
+            <li><a href="<?=base_url()?>index.php/main/inventory_object/?idioma=catalan"><?php echo lang('catalan');?></a></li>
+            <li><a href="<?=base_url()?>index.php/main/inventory_object/?idioma=spanish"><?php echo lang('spanish');?></a></li>
+            <li><a href="<?=base_url()?>index.php/main/inventory_object/?idioma=english"><?php echo lang('english');?></a></li>
           </ul>
       </li>
      </ul>               
@@ -176,72 +178,59 @@ $("#accordion").accordion();
 $("#accordion").accordion( "option", "collapsible", true );
 $("#accordion").accordion("option", "active", false );
 $("#accordion").accordion({ heightStyle: "fill" });
-$(".chosen").chosen();
+$(".chosen").chosen().chosenSortable();
 
 /* Below Code Matches current object's (i.e. option) value with the array values */
 /* Returns -1 if match not found */
-var valArr = ["inventory_objectId","publicId","externalID"];
 
-$('option').each( function() {
-       if(jQuery.inArray(this.value, valArr) !=-1) {
-         //alert("In array:" + this.value);
-         $(this).attr('selected', true); 
-         $('select').trigger('liszt:updated');
-       }
-});
-   
-//       if(jQuery.inArray(this.value, valArr) !=-1)
+<?php
 
-$('.reset').click(function(){
-    $('option').prop('selected', false);
-    $('select').trigger('liszt:updated');    
-    var valArr = ["inventory_objectId","publicId","externalID"];
-    
-    $('option').each( 
+$current_table_current_fields_to_show= $current_table_name . "_current_fields_to_show";
+$js_array = json_encode($this->session->userdata($current_table_current_fields_to_show));
+echo "var selectedFields = ". $js_array . ";\n";
+
+$js1_array = json_encode($fields_in_table);
+echo "var allFields = ". $js1_array . ";\n";
+
+?>
+
+$('option').each( 
      function() {
-           if (jQuery.inArray(this.value, valArr) !=-1) {
+           if (jQuery.inArray(this.value, selectedFields) !=-1) {
              $(this).attr('selected', true);
              $('select').trigger('liszt:updated');
            }
      });
-     
-     $(".chosen").chosen().change();
-
+   
+$('.reset').click(function(){
+    $('option').prop('selected', false);
+    $('select').trigger('liszt:updated');   
+    
+<?php
+$current_table_current_fields_to_show= $current_table_name . "_current_fields_to_show";
+$js_array = json_encode($this->session->userdata($current_table_current_fields_to_show));
+echo "var selectedFields = ". $js_array . ";\n";     
+?>
+    
+    $('option').each( 
+     function() {
+           if (jQuery.inArray(this.value, selectedFields) !=-1) {
+             $(this).attr('selected', true);
+             $('select').trigger('liszt:updated');
+           }
+     });
 });         
 
 
 $('.select').click(function(){
     $('option').prop('selected', true);
     $('select').trigger('liszt:updated');
-    $(".chosen").chosen().change();
 });
 
 $('.deselect').click(function(){
     $('option').prop('selected', false);
     $('select').trigger('liszt:updated');
-    $(".chosen").chosen().change();
-
 });
-
-$(".chosen").chosen().change(function() {
-   //alert("change!");
-   //SELECTED VALUES
-   //alert( $(".chosen").chosen().val() );
-   //SELECTED VALUES IN JSON FORMAT
-   //alert (JSON.stringify(  $(".chosen").chosen().val() ));
-      
-   // Ajax request sent to the CodeIgniter controller "ajax" method "username_taken"
-   // post the username field's value
-   
-   
-   $.post(
-      'update_displayed_fields',
-      { 'selected_columns': $(".chosen").chosen().val() } 
-    ); 
-    
-    
-});
-
 });
 
 
@@ -258,33 +247,46 @@ font-size: xx-small;
 <!-- JQUERY UI ACORDION -->
 
 <div id="accordion">
-<h3 style="font-size: x-small"><?php echo lang('fields_tho_show'); ?></h3>
-<div style="font-size: xx-small; vertical-align:middle;">
-<select id="table_fields" data-placeholder="<?php echo lang('choose_fields'); ?>" style="width:100%" class="chosen" multiple>
- <?php foreach($fields_in_table as $field): ?>
-    <option value="<?php echo $field; ?>" ><?php echo lang($field); ?></option>
- <?php endforeach; ?>
-</select>
-<br/>
-<button class="reset"><?php echo lang('reset'); ?></button>
-<button class="select"><?php echo lang('select_all'); ?></button>
-<button class="deselect"><?php echo lang('unselect_all'); ?></button>        
-<button class="apply"><?php echo lang('apply'); ?></button>      
-
-<div style='height:100px;'></div>        
-</div>
-                   
-<!--
-<h3 style="font-size: x-small">Section 2</h3>
- <div style="font-size: x-small">
-  <p>
-  Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-  purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
-  velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
-  suscipit faucibus urna.
-  </p>
+ <h3 style="font-size: x-small"><?php echo lang('fields_tho_show'); ?></h3>
+  <div style="font-size: xx-small; vertical-align:middle;">
+   <form action="<?=base_url()?>index.php/main/update_displayed_fields" method="post" accept-charset="utf-8">	
+   
+   <select id="table_fields" name="current_selected_table_fields[]" data-placeholder="<?php echo lang('choose_fields'); ?>" style="width:100%" class="chosen chzn-sortable" multiple>
+    <?php foreach($sorted_fields_in_table as $field): ?>
+      <?php if ($field==$table_id): ?>                   
+          <option value="<?php echo $field; ?>">Id</option>
+      <?php else: ?>  
+		  <option value="<?php echo $field; ?>"><?php echo lang($field); ?></option>     
+      <?php endif; ?>  
+  
+    <?php endforeach; ?>
+   </select>
+   <br/>
+   <button class="reset" type="button"><?php echo lang('reset'); ?></button>
+   <button class="select" type="button"><?php echo lang('select_all'); ?></button>
+   <button class="deselect" type="button"><?php echo lang('unselect_all'); ?></button>        
+   <button class="apply"><?php echo lang('apply'); ?></button>      
+   <input type="hidden" name="table_name" value="<?php echo $current_table_name?>">
+   </form>
+   <div style='height:100px;'></div>
+  </div> 
+ 
+<?php if (@$organizational_units): ?>                   
+ <h3 style="font-size: x-small"><?php echo lang('Filter by organizational units'); ?></h3>
+  <div style="font-size: xx-small;">
+   <form action="/index.php/main/TODO2" method="post" accept-charset="utf-8">	
+   <select id="organizational_units" data-placeholder="<?php echo lang('choose_organization_unit'); ?>" style="width:500px" class="chosen">
+    <?php foreach($organizational_units as $row): ?>
+     <option value="<?php echo $row['organizational_unitId']; ?>" ><?php echo $row['name']; ?></option>
+    <?php endforeach; ?>
+   </select>
+   <br/><button class="apply"><?php echo lang('apply'); ?></button>    
+   </form>
+  <div style='height:100px;'></div>
  </div>
--->
+<?php endif; ?>  
+</div> 
+
 </div>
 <?php endif; ?>
 
