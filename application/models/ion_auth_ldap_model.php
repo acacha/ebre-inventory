@@ -140,7 +140,67 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 		if ($remember && $this->config->item('remember_users', 'ion_auth')) {
 			$this->remember_user($user->id);
 		}
+		
+		//SET DEFAULT LANGUAGE
+		if (!$this->session->userdata("current_language")) {
+			$this->session->set_userdata("current_language",
+										  $this->config->item('default_language'));
+		}
+		
+		$this->_initialize_fields();
 		return TRUE;
+	}
+	
+	protected function _initialize_fields() {
+		
+		if (!$this->session->userdata("inventory_object_current_fields_to_show")) {
+			$this->session->set_userdata("inventory_object_current_fields_to_show",
+									 $this->config->item('default_fields_table_inventory_object'));
+		}
+		
+		if (!$this->session->userdata("externalIDType_current_fields_to_show")) {
+			$this->session->set_userdata("externalIDType_current_fields_to_show",
+									 $this->config->item('default_fields_table_externalIDType'));							 
+		}
+		
+		if (!$this->session->userdata("organizational_unit_current_fields_to_show")) {
+			$this->session->set_userdata("organizational_unit_current_fields_to_show",
+									 $this->config->item('default_fields_table_organizational_unit'));
+		}
+		
+		if (!$this->session->userdata("location_current_fields_to_show")) {
+			$this->session->set_userdata("location_current_fields_to_show",
+									 $this->config->item('default_fields_table_location'));
+		}
+		if (!$this->session->userdata("material_current_fields_to_show")) {
+			$this->session->set_userdata("material_current_fields_to_show",
+									 $this->config->item('default_fields_table_material'));
+		}
+		if (!$this->session->userdata("brand_current_fields_to_show")) {
+			$this->session->set_userdata("brand_current_fields_to_show",
+									 $this->config->item('default_fields_table_brand'));
+		}
+		if (!$this->session->userdata("model_current_fields_to_show")) {
+			$this->session->set_userdata("model_current_fields_to_show",
+									 $this->config->item('default_fields_table_model'));			
+		}
+		if (!$this->session->userdata("provider_current_fields_to_show")) {
+			$this->session->set_userdata("provider_current_fields_to_show",
+									 $this->config->item('default_fields_table_provider'));
+		}
+		if (!$this->session->userdata("money_source_current_fields_to_show")) {
+			$this->session->set_userdata("money_source_current_fields_to_show",
+									 $this->config->item('default_fields_table_money_source'));			
+		}
+		if (!$this->session->userdata("users_current_fields_to_show")) {
+			$this->session->set_userdata("users_current_fields_to_show",
+									 $this->config->item('default_fields_table_users'));
+		}
+		if (!$this->session->userdata("groups_current_fields_to_show")) {
+			$this->session->set_userdata("groups_current_fields_to_show",
+									 $this->config->item('default_fields_table_groups'));
+		}																																
+									 
 	}
 	
 	/**

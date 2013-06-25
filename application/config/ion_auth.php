@@ -100,10 +100,10 @@ $config['max_password_length']        = 20;                  // Maximum Allowed 
 $config['email_activation']           = FALSE;               // Email Activation for registration
 $config['manual_activation']          = FALSE;               // Manual Activation for registration
 $config['remember_users']             = TRUE;                // Allow users to be remembered and enable auto-login
-$config['user_expire']                = 86500;               // How long to remember the user (seconds). Set to zero for no expiration
+$config['user_expire']                = 7200;               // How long to remember the user (seconds). Set to zero for no expiration
 $config['user_extend_on_login']       = FALSE;               // Extend the users cookies everytime they auto-login
 $config['track_login_attempts']       = TRUE;               // Track the number of failed login attempts for each user or ip.
-$config['maximum_login_attempts']     = 10;                   // The maximum number of failed login attempts.
+$config['maximum_login_attempts']     = 20;                   // The maximum number of failed login attempts.
 $config['lockout_time']               = 600;                 // The number of miliseconds to lockout an account due to exceeded attempts
 $config['forgot_password_expiration'] = 0;                   // The number of miliseconds after which a forgot password request will expire. If set to 0, forgot password requests will not expire.
 

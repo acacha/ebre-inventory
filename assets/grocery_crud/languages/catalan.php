@@ -14,6 +14,7 @@
 	$lang['list_clear_filtering']   = 'Limpiar filtrados';
 	$lang['list_delete']			= 'Borrar';
 	$lang['list_edit']				= 'Editar';  
+	$lang['list_view']				= 'Veure';  
 	$lang['list_paging_first']		= 'Primero';
 	$lang['list_paging_previous']	= 'Anterior';
 	$lang['list_paging_next']		= 'Siguiente';
@@ -21,6 +22,7 @@
 	$lang['list_loading']			= 'Cargando...';          
 
 	$lang['form_edit']				= 'Editar';
+	$lang['form_view']				= 'Veure';
 	$lang['form_back_to_list']		= 'Tornar a la llista';
 	$lang['form_update_changes']	= 'Actualitzar canvis';
 	$lang['form_cancel']			= 'Cancel·lar';  
@@ -58,6 +60,7 @@
 	/* Added in version 1.2.2 */
 	$lang['form_save_and_go_back']	= 'Guardar i tornar a la llista';
 	$lang['form_update_and_go_back']= 'Actualitzar i tornar a la llista';
+	$lang['form_view_and_go_back']= 'Tornar a la llista';
 
 	/* Upload functionality */
 	$lang['string_delete_file'] 	= "Esborrant arxiu";

@@ -171,6 +171,39 @@ $config['default_realm'] = "ldap";
 */
 $config['readonly_group'] = "inventory_readonly";
 
+/*
+|--------------------------------------------------------------------------
+| GROUP WITH POWERUSER ROLE
+|--------------------------------------------------------------------------
+|
+| Groups with poweruses acces to app: they could do anything with their data.
+| They could'nt modify database data not owned by they
+| 
+| Example: inventory_poweruser
+*/
+$config['poweruser_group'] = "inventory_poweruser";
+
+/*
+|--------------------------------------------------------------------------
+| GROUP WITH DATAENTRY ROLE
+|--------------------------------------------------------------------------
+|
+| Groups with DATAENTRY acces to app: they could enter any objects to database
+| but they don't have accés to maintenance menu
+| 
+| Example: inventory_poweruser
+*/
+$config['dataentry_group'] = "inventory_dataentry";
+
+//TODO
+//ROLE: ONLY ADD/MODIFIY/DELETE OBJECTS OF HIS ORGANIZATIONAL_UNIT
+//ADD FIELD TO USERS DATABASE: organizationalUnitID?
+//MULTIPLE ORGANIZATIONAL UNITS? -->
+// CREATE DATABASE users_organizationunits (relation_n_n)
+
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -183,6 +216,16 @@ $config['readonly_group'] = "inventory_readonly";
 */
 $config['admin_group'] = "inventory_admin";
 
+/*
+|--------------------------------------------------------------------------
+| DEFAULT LANGUAGE
+|--------------------------------------------------------------------------
+|
+| Default language (user name of code igniter folder i languages folder)
+| 
+| Example: catalan
+*/
+$config['default_language'] = "catalan";
 
 // DEFAULT FIELDS
   

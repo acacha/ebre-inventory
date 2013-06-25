@@ -798,7 +798,7 @@ class Main extends CI_Controller {
 		
 		$post_array['creationUserId'] = $this->session->userdata('user_id');
 		$post_array['lastupdateUserId'] = $this->session->userdata('user_id');
-		return $post_array;
+		return from_date_to_unix($post_array);
     }
     
     //UPDATE AUTOMATIC FIELDS BEFORE UPDATE
@@ -808,8 +808,23 @@ class Main extends CI_Controller {
 		$post_array['last_update'] = $data;
 		
 		$post_array['lastupdateUserId'] = $this->session->userdata('session_id');
-        return $post_array;
+		
+		return from_date_to_unix($post_array);
     }
+    
+    
+	public function from_date_to_unix($array_post){
+	    $date_delimiter='/';//assuming uk-date as defined date format
+	    $posted_dates=array('fecha'=>$array_post['fecha']);//fecha is the name of the field posted
+	    //if have more than one field add it 'yourfield'=>$array_post['yourfield] to the array
+	    foreach($posted_dates as $key=>$posted_date){
+		    $date_array=explode($date_delimiter,$posted_date);
+		    $date=strtotime(implode('-', array($date_array[2], $date_array[1], $date_array[0])));//indexed may vary from us-date and uk-date
+		    //you need to know implode must receive('-',array(YEAR,MONTH,DAY)
+		    $array_post[$key]=$date;
+	    }
+	    return $array_post;
+	}
 	
 
 	public function externalIDType() {
@@ -1437,6 +1452,8 @@ public function groups(){
        
        //Establish fields/columns order and wich camps to show
        $this->grocery_crud->columns($this->session->userdata('groups_current_fields_to_show'));
+       
+       $crud->field_type('created_on', 'date_timestamp');
        
        $this->grocery_crud->set_relation_n_n('users', 'users_groups','users', 'user_id', 'id', 'username');
             

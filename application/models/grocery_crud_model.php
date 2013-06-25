@@ -205,6 +205,14 @@ class grocery_CRUD_Model  extends CI_Model  {
     	return $result;
     }
     
+    function get_view_values($primary_key_value)
+    {
+    	$primary_key_field = $this->get_primary_key();
+    	$this->db->where($primary_key_field,$primary_key_value);
+    	$result = $this->db->get($this->table_name)->row();
+    	return $result;
+    }
+    
     function join_relation($field_name , $related_table , $related_field_title)
     {
 		$related_primary_key = $this->get_primary_key($related_table);
@@ -236,6 +244,29 @@ class grocery_CRUD_Model  extends CI_Model  {
     {
     	return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
     }    
+    
+    function get_relation_value($field_name , $related_table , $related_field_title,$value)
+    {
+		$related_primary_key = $this->get_primary_key($related_table);
+		
+		$related_field_title = str_replace("{", "", $related_field_title);
+    	$related_field_title = str_replace("}", "", $related_field_title);
+		
+		$select = "$related_table.$related_field_title";
+    	$this->db->select($select,false);
+    	$where_clause = array($related_primary_key=> $value);
+    	$this->db->where($where_clause);    	
+    	$result = $this->db->get($related_table)->result();
+    	//echo "<br/> ---------------";
+    	//print_r($result);
+    	//echo "<br/>";
+    	
+		if (count($result) != 0)
+			return $result[0]->$related_field_title;
+		else
+			return "";
+	}
+    
     
     function get_relation_array($field_name , $related_table , $related_field_title, $where_clause, $order_by, $limit = null, $search_like = null)
     {
