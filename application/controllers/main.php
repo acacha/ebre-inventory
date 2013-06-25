@@ -25,57 +25,19 @@ class Main extends CI_Controller {
 		//LOAD INVENTORY MODEL
 		$this->load->model('inventory_model');
 		
-		/* Idioma per defecte */
-		if(isset($_SESSION['idioma'])){
-			$this->grocery_crud->set_language($_SESSION['idioma']);
-			$this->config->set_item('language', $_SESSION['idioma']);
-		}else{
-			$_SESSION['idioma'] = 'catalan';
-			$this->grocery_crud->set_language($_SESSION['idioma']);
-			$this->config->set_item('language', $_SESSION['idioma']);
+		/* Set language */
+		$current_language=$this->session->userdata("current_language");
+		if ($current_language == "") {
+			$current_language= $this->config->item('default_language');
 		}
+		$this->grocery_crud->set_language($current_language);
+    	$this->lang->load('inventory', $current_language);	       
+
 		
-		/* Tamany pantalla */
-		if(!isset($_SESSION['tamany'])){
-		$_SESSION['tamany'] = 'petit';
-		}
-		
-        //Localization:
-        
-        //TODO: Session variable with selected language
-        $this->lang->load('inventory', 'catalan');	       
+        //LANGUAGE HELPER:
         $this->load->helper('language');
- 
-		//Initialize default fields to show
-		$this->_initialize_fields();
     }
     
-    public function _initialize_fields(){
-		$this->session->set_userdata("inventory_object_current_fields_to_show",
-									 $this->config->item('default_fields_table_inventory_object'));
-		$this->session->set_userdata("externalIDType_current_fields_to_show",
-									 $this->config->item('default_fields_table_externalIDType'));							 
-		$this->session->set_userdata("organizational_unit_current_fields_to_show",
-									 $this->config->item('default_fields_table_organizational_unit'));
-		$this->session->set_userdata("location_current_fields_to_show",
-									 $this->config->item('default_fields_table_location'));
-		$this->session->set_userdata("material_current_fields_to_show",
-									 $this->config->item('default_fields_table_material'));
-		$this->session->set_userdata("brand_current_fields_to_show",
-									 $this->config->item('default_fields_table_brand'));
-		$this->session->set_userdata("model_current_fields_to_show",
-									 $this->config->item('default_fields_table_model'));			
-		$this->session->set_userdata("provider_current_fields_to_show",
-									 $this->config->item('default_fields_table_provider'));
-		$this->session->set_userdata("money_source_current_fields_to_show",
-									 $this->config->item('default_fields_table_money_source'));			
-		$this->session->set_userdata("users_current_fields_to_show",
-									 $this->config->item('default_fields_table_users'));
-		$this->session->set_userdata("groups_current_fields_to_show",
-									 $this->config->item('default_fields_table_groups'));																																
-	}
-    
-	
 	public function signin(){
 		$this->load->view('signin');
 	}
@@ -179,7 +141,7 @@ class Main extends CI_Controller {
         $data['fields_in_table'] = $this->db->list_fields($this->current_table);
 
 		$current_fields_to_show= $this->session->userdata($this->current_table."_current_fields_to_show");
-   
+		
         $sorted_fields_in_table = array_unique(array_merge($current_fields_to_show, $data['fields_in_table']));
         
         $data['table_id'] = $this->getDatabaseIdByTable($this->current_table);
@@ -243,6 +205,11 @@ class Main extends CI_Controller {
 				break;
 		}
 	}
+	
+	public function change_language($language) {
+		$this->session->set_userdata('current_language', $language);
+		redirect($_SERVER[‘HTTP_REFERER’]);
+	}
     
     //UPDATE SESSION VARIABLES WITH COLUMNS TO SHOW
     public function update_displayed_fields()
@@ -260,36 +227,37 @@ class Main extends CI_Controller {
 				if (!$skip) {
 					$this->session->set_userdata("inventory_object_current_fields_to_show",
 									 $selected_columns);
-				}
-				$this->inventory_object();
+			}
+				redirect("main/inventory_object", 'refresh');
 				break;
 			case "externalIDType":
 				if (!$skip) {
+					$this->session->unset_userdata("externalIDType_current_fields_to_show");
 					$this->session->set_userdata("externalIDType_current_fields_to_show",
-									 $selected_columns);
+									 $selected_columns);			 
 				}
-				$this->externalIDType();
+				redirect("main/externalIDType", 'refresh');
 				break;
 			case "organizational_unit":
 				if (!$skip) {
 					$this->session->set_userdata("organizational_unit_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->organizational_unit();
+				redirect("main/organizational_unit", 'refresh');
 				break;	
 			case "location":
 				if (!$skip) {
 					$this->session->set_userdata("location_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->location();
+				redirect("main/location", 'refresh');
 				break;
 			case "material":
 				if (!$skip) {
 					$this->session->set_userdata("material_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->material();
+				redirect("main/material", 'refresh');
 				break;
 			case "brand":
 				if (!$skip) {
@@ -303,35 +271,35 @@ class Main extends CI_Controller {
 					$this->session->set_userdata("model_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->model();
+				redirect("main/model", 'refresh');
 				break;
 			case "provider":
 				if (!$skip) {
 					$this->session->set_userdata("provider_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->provider();
+				redirect("main/provider", 'refresh');
 				break;
 			case "money_source":
 				if (!$skip) {
 					$this->session->set_userdata("money_source_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->money_source();
+				redirect("main/money_source", 'refresh');
 				break;
 			case "users":
 				if (!$skip) {
 					$this->session->set_userdata("users_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->users();
+				redirect("main/users", 'refresh');
 				break;	
 			case "groups":
 				if (!$skip) {
 					$this->session->set_userdata("groups_current_fields_to_show",
 									 $selected_columns);
 				}
-				$this->groups();
+				redirect("main/groups", 'refresh');
 				break;	
 			default:
 				redirect("inventory_errors/tablenotfound", 'refresh');
@@ -355,8 +323,16 @@ class Main extends CI_Controller {
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
-					
+		
 		$image_crud = new image_CRUD();
+		
+		//CHECK IF USER IS READONLY --> unset upload & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$image_crud->unset_upload();
+			$image_crud->unset_delete();
+		}
 	
 		$image_crud->set_table('images');
 	
@@ -373,16 +349,10 @@ class Main extends CI_Controller {
 		$this->load->view('images', $output);
 	}
 	
-	public function _rewrite_table_url($primary_key , $row)
-	{
-		$url = site_url('/main/' . $this->current_table . '/edit').'/'.$primary_key.'#readonly';
-		return $url; 
-	}
-	
-	 public function inventory_object1()
+	public function inventory_object1()
     {
 		
-		$this->grocery_crud->set_model('Users_join');
+		//$this->grocery_crud->set_model('Users_join');
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
@@ -548,25 +518,23 @@ class Main extends CI_Controller {
 			redirect($this->login_page, 'refresh');
 		}
 		
-		//COMMON CUSTOM ACTIONS
-		$this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));	
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
 		
 		//ESPECIFIC CUSTOM ACTIONS
         $this->grocery_crud->add_action(lang('Images'),base_url('assets/img/images.png'), '/main/images');
         $this->grocery_crud->add_action(lang('QRCode'),base_url('assets/img/qr_code.png'), '/qr/generate');
-
-		//TODO!!!!!!
-		if(isset($_GET['idioma'])){
-			$idioma=$_GET['idioma'];
-			$_SESSION['idioma'] = $idioma;
-			$this->grocery_crud->set_language($_SESSION['idioma']);
-		}
 		
 		$this->grocery_crud->set_table('inventory_object');
 		
 		//FILTER BY ORGANIZATIONAL UNIT
-		//Realtion n a n table: inventory_object_organizational_unit
+		//Relation n a n table: inventory_object_organizational_unit
 		//$crud->where('status','active');->where('status','active');
         
         //Establish subject:
@@ -697,25 +665,64 @@ class Main extends CI_Controller {
             '//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.min.js', 
             base_url('assets/js/bootstrap.min.js'), 
             base_url('assets/js/custom.js'),
+            base_url('assets/grocery_crud/themes/flexigrid/js/jquery.form.js'),
+            base_url('assets/grocery_crud/themes/flexigrid/js/flexigrid-edit.js')
             );
         $data['inventory_css_files'] = array(
             base_url('assets/css/bootstrap.min.css'),
             base_url('assets/css/bootstrap-responsive.min.css'),
             base_url('assets/css/font-awesome.css'),
             base_url('assets/css/custom.css'),
+            base_url('/assets/grocery_crud/themes/flexigrid/css/flexigrid.css')
             );           
+            
         $data['not_show_header2']=true;
+        
+        $current_roles = array();
+        $current_roles_ids = (array) $this->session->userdata('role');
+        foreach ($current_roles_ids as $current_roles_id) {
+			$current_roles[]=$this->_get_rolename_byId($current_roles_id);
+		}
+		
+        $data['institution_name'] = $this->config->item('institution_name');
+        $data['grocerycrudstate']=true;
+        $data['grocerycrudstate_text']=lang('user_info_title');
+
+        $data['fields']=array (
+			lang('user_id_title') =>  $this->session->userdata('user_id'),
+			lang('username_title') => $this->session->userdata('username'),
+			lang('email_title') => $this->session->userdata('email'),
+			lang('roles_title') => implode(", ",$current_roles),
+			lang('realm_title') => $this->session->userdata('default_realm'),
+			lang('inventory_object_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_inventory_object')),
+			lang('externalIDType_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_externalIDType')),
+			lang('organizational_unit_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_organizational_unit')),
+			lang('location_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_location')),
+			lang('material_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_material')),
+			lang('brand_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_brand')),
+			lang('model_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_model')),
+			lang('provider_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_provider')),
+			lang('money_source_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_money_source')),
+			lang('users_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_users')),
+			lang('groups_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_groups'))
+        );
 		$this->load->view('include/header',$data);
+		
+		
 		$this->load->view('user_info_view'); 
 		$this->load->view('include/footer'); 
 	}
     
+    function _get_rolename_byId($id){
+		
+		$roles = (array) $this->config->item('roles');
+		
+		return $roles[$id];
+	}
     
     //
     function _get_default_values() {
 		
-		//print_r($this->session->all_userdata());
-		//echo "user_id: " . $this->session->userdata('user_id');
 		$defaultvalues['defaultcreationUserId']= $this->session->userdata('user_id');
 		
 		$defaultvalues['defaultfieldexternalIDType']= $this->config->item('default_externalID_type');
@@ -806,19 +813,24 @@ class Main extends CI_Controller {
 	
 
 	public function externalIDType() {
-		
+
         if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
 		
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
+		
 		$this->current_table="externalIDType";
         $this->grocery_crud->set_table($this->current_table);
-        
-        //COMMON CUSTOM ACTIONS
-		$this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));
         
         //Establish subject:
         $this->grocery_crud->set_subject(lang('externalID_subject'));
@@ -866,18 +878,26 @@ class Main extends CI_Controller {
     
     }
        
-    public function _organizationalunit_shared($read_only = FALSE)
+    public function organizational_unit()
     {
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
+		
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
+		
         $this->current_table="organizational_unit";
         $this->grocery_crud->set_table($this->current_table);
         
-        //CUSTOM ACTIONS
-        $this->grocery_crud->add_action(lang('View'),base_url('assets/img/images.png'), '','',array($this,'_rewrite_table_url'));
         //Establish subject:
         $this->grocery_crud->set_subject(lang('organizationalunit_subject'));
                   
@@ -918,12 +938,6 @@ class Main extends CI_Controller {
         
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
-
-		if ($read_only) {
-			$this->grocery_crud->unset_add();
-			$this->grocery_crud->unset_edit();
-			$this->grocery_crud->unset_delete();
-		}
         
         $output = $this->grocery_crud->render();
            
@@ -936,14 +950,8 @@ class Main extends CI_Controller {
 	    $this->load->view('include/footer');                        
 	}
 	
-    public function organizational_unit()
-    {
-		$this->_organizationalunit_shared();
-    }
     
-	public function organizationalunit_readonly()	{
-		$this->_organizationalunit_shared(true);
-    }
+    
     
     public function location()
     {
@@ -952,13 +960,19 @@ class Main extends CI_Controller {
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
+		
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
+		
 		$this->current_table="location";
         $this->grocery_crud->set_table($this->current_table);
         
-        //COMMON CUSTOM ACTIONS
-		$this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));
-       
         //ESTABLISH SUBJECT
         $this->grocery_crud->set_subject(lang('location_subject'));                
         
@@ -1020,9 +1034,14 @@ public function material()
 	   $this->current_table="material";
        $this->grocery_crud->set_table($this->current_table);
        
-       //COMMON CUSTOM ACTIONS
-	   $this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));
+       //CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
         
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('material_subject'));
@@ -1075,17 +1094,21 @@ public function material()
 public function brand()
 {
 	   if (!$this->ion_auth->logged_in())
-		{
+	   {
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
-		}	
+	   }
+	   //CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+	   }	
 	   $this->current_table="brand";
        $this->grocery_crud->set_table($this->current_table);
        
-       //COMMON CUSTOM ACTIONS
-	   $this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));
-        
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('brand_subject'));
        
@@ -1134,14 +1157,18 @@ public function model()
 		{
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
+		}
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
 		}	
 	   $this->current_table="model";
        $this->grocery_crud->set_table($this->current_table);
-       
-       //COMMON CUSTOM ACTIONS
-	   $this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));
-        
+         
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('model_subject'));
        
@@ -1153,9 +1180,8 @@ public function model()
 
        //SPECIFIC COLUMNS
        $this->grocery_crud->display_as('brandId',lang('brand'));
-       
-       //Establish fields/columns order and wich camps to show
-        $this->grocery_crud->columns($this->session->userdata('model_current_fields_to_show'));
+                                         
+       $this->grocery_crud->columns($this->session->userdata('model_current_fields_to_show'));
        
        //Parent brand
        $this->grocery_crud->set_relation('brandId','brand','{name}',array('markedForDeletion' => 'n'));
@@ -1195,13 +1221,17 @@ public function provider()
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 	   }	
+	   //CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
        $this->current_table="provider";
        $this->grocery_crud->set_table($this->current_table);    
        
-       //COMMON CUSTOM ACTIONS
-	   $this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));
-                             
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('provider_subject'));
        
@@ -1250,22 +1280,27 @@ public function money_source()
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
+		
         $this->current_table="money_source";
         $this->grocery_crud->set_table($this->current_table);  
         
-        //COMMON CUSTOM ACTIONS
-	    $this->grocery_crud->add_action(lang('View'),
-			base_url('assets/img/icon-eye-open.png'), '','',array($this,'_rewrite_table_url'));
-        
         //ESTABLISH SUBJECT
         $this->grocery_crud->set_subject(lang('money_source_id_subject'));
-        
+
         //Camps obligatoris
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
-                                     
+
         //COMMON_COLUMNS                 
         $this->set_common_columns_name();
-        
+
         //Establish fields/columns order and wich camps to show
         $this->grocery_crud->columns($this->session->userdata('money_source_current_fields_to_show'));
         
@@ -1302,6 +1337,14 @@ public function users() {
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+	    }
 		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
 		
 		/*
@@ -1369,6 +1412,14 @@ public function groups(){
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+	   }
 	   $this->current_table="groups";
        $this->grocery_crud->set_table($this->current_table);  
        
@@ -1418,6 +1469,14 @@ public function devices() {
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
+		$readonly_group = $this->config->item('readonly_group');;
+		if (!$this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+	   }
        $this->current_table="inventory_object";
        $this->grocery_crud->set_table($this->current_table);       
        
