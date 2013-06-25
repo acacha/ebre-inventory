@@ -647,6 +647,19 @@ div.pGroup {
 	margin-left:5px;
 	display: block;
 }
+.flexigrid .view-icon
+{
+	background:url(images/icon-eye-open.png) no-repeat;
+	cursor: pointer;	
+	width: 32px;
+	height:32px;
+	float:right;	
+	border: none !important;
+	padding:0px !important;	
+	padding-bottom:0px !important;		
+	margin-left:5px;
+	display: block;
+}
 .flexigrid .delete-icon
 {
 	background:url(images/close.png) no-repeat;

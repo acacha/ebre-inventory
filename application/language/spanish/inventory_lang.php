@@ -17,64 +17,64 @@
 */
 
 //GENERAL
-$lang['inventory']       		= 'Inventari';
+$lang['inventory']       		= 'Inventario';
 $lang['remember']       		= 'Recordar';
 
 //LOGIN FORM
-$lang['login-form-greetings']   = 'Si us plau, entreu';
-$lang['User']   = 'Usuari';
-$lang['Password']   = 'Paraula de pas';
-$lang['Register']   = 'Registrar';
+$lang['login-form-greetings']   = 'Por favor, entrad';
+$lang['User']   = 'Usuario';
+$lang['Password']   = 'Contraseña';
+$lang['Register']   = 'Registrar-se';
 $lang['Login']   = 'Entrar';
 
 
 // Camps
-$lang['name']       		= 'Nom';
-$lang['shortName']        	= 'Nom curt';           
-$lang['description']            = 'Descripció';
-$lang['entryDate']              = "Data d'entrada (automàtica)";
-$lang['manualEntryDate']        = "Data d'entrada (manual)";
-$lang['last_update']            = 'Última actualització (automàtica)';
-$lang['manual_last_update']     = 'Última actualització (manual)';
-$lang['creationUserId']         = 'Usuari de creació';
-$lang['lastupdateUserId']       = 'Usuari darrera actualització';
-$lang['materialId']             = 'Tipus de material';
+$lang['name']       		= 'Nombre';
+$lang['shortName']        	= 'Nombre corto';           
+$lang['description']            = 'Descripción';
+$lang['entryDate']              = "Fecha de entrada (automática)";
+$lang['manualEntryDate']        = "Fecha de entrada (manual)";
+$lang['last_update']            = 'Última actualitzación (automática)';
+$lang['manual_last_update']     = 'Última actualitzación (manual)';
+$lang['creationUserId']         = 'Usuario de creación';
+$lang['lastupdateUserId']       = 'Usuario última actualitzación';
+$lang['materialId']             = 'Tipo de material';
 $lang['brandId']             = 'Marca';
 $lang['brand']             = 'Marca';
-$lang['modelId']             = 'Model';
-$lang['location']               = 'Ubicació';
-$lang['quantityInStock']        = 'Quantitat'; 
-$lang['price']                  = 'Preu'; 
-$lang['moneySourceIdcolumn']    = 'Font dels diners'; 
-$lang['providerId']             = 'Proveïdor'; 
-$lang['preservationState']      = 'Estat de conservació'; 
-$lang['markedForDeletion']      = 'Baixa lògica?'; 
-$lang['markedForDeletionDate']  = 'Data de baixa'; 
-$lang['file_url']               = 'Fitxer principal'; 
-$lang['OwnerOrganizationalUnit']  = 'Unitat organitzativa'; 
-$lang['publicId'] = 'Id públic';
-$lang['externalId'] = 'Id extern';
-$lang['externalID'] = 'Id extern';
-$lang['externalIDType'] = 'Tipus Id extern';
+$lang['modelId']             = 'Modelo';
+$lang['location']               = 'Ubicación';
+$lang['quantityInStock']        = 'Cantidad'; 
+$lang['price']                  = 'Precio'; 
+$lang['moneySourceIdcolumn']    = 'Origen del dinero'; 
+$lang['providerId']             = 'Proveidor'; 
+$lang['preservationState']      = 'Estado de conservación'; 
+$lang['markedForDeletion']      = 'Baja lógica?'; 
+$lang['markedForDeletionDate']  = 'Fecha de baja'; 
+$lang['file_url']               = 'Fichero principal'; 
+$lang['OwnerOrganizationalUnit']  = 'Unidad organizativa'; 
+$lang['publicId'] = 'Id público';
+$lang['externalId'] = 'Id externo';
+$lang['externalID'] = 'Id externo';
+$lang['externalIDType'] = 'Tipo de Id externo';
 $lang['Id'] = 'Id';
 $lang['id'] = 'Id';
 
-$lang['code'] = 'Codi';
-$lang['parentLocation'] = 'Espai pare';
-$lang['parentMaterialId'] = 'Material pare'; 
+$lang['code'] = 'Código';
+$lang['parentLocation'] = 'Espacio padre';
+$lang['parentMaterialId'] = 'Material padre'; 
 
 //SUBJECTS
-$lang['object_subject'] = 'objecte';
-$lang['externalID_subject']       		= 'identificador extern';
-$lang['organizationalunit_subject']     = 'unitat organitzativa';
-$lang['location_subject']     = 'ubicació';
-$lang['material_subject']     = 'tipus material';
+$lang['object_subject'] = 'objeto';
+$lang['externalID_subject']       		= 'identificador externo';
+$lang['organizationalunit_subject']     = 'unidad organitzativa';
+$lang['location_subject']     = 'ubicación';
+$lang['material_subject']     = 'tipo de material';
 $lang['brand_subject']     = 'marca';
-$lang['model_subject']     = 'model';
-$lang['provider_subject']     = 'proveïdor';
-$lang['money_source_id_subject'] = 'origen dels diners';
-$lang['users_subject'] = 'usuari';
-$lang['groups_subject'] = 'grup';
+$lang['model_subject']     = 'modelo';
+$lang['provider_subject']     = 'proveidor';
+$lang['money_source_id_subject'] = 'origen del dinero';
+$lang['users_subject'] = 'usuario';
+$lang['groups_subject'] = 'grupo';
 
 //BUTTONS
 $lang['reset'] = 'Reset';
@@ -83,66 +83,66 @@ $lang['unselect_all'] = 'Deseleccionar tot';
 $lang['apply'] = 'Aplicar';
 
 //PLACEHOLDERS
-$lang['choose_fields'] = 'Escull els camps a mostrar';
-$lang['fields_tho_show'] = 'Camps a mostrar';
+$lang['choose_fields'] = 'Escoge los campos a mostrar';
+$lang['fields_tho_show'] = 'Campos a mostrar';
 
 
 //ACTIONS
-$lang['Images'] = 'Imatges';
-$lang['QRCode'] = 'Codi QR';
-$lang['View'] = 'Veure';
+$lang['Images'] = 'Imagenes';
+$lang['QRCode'] = 'Código QR';
+$lang['View'] = 'Ver';
 
 //LOGIN & AUTH
-$lang['CloseSession'] = 'Tancar Sessió';
+$lang['CloseSession'] = 'Cerrar sessión';
 
 //MENUS
-$lang['devices'] = 'Dispositius';
- $lang['computers'] = 'Ordinadors';
- $lang['others'] = 'Altres';
+$lang['devices'] = 'Dispositivos';
+ $lang['computers'] = 'Ordenadores';
+ $lang['others'] = 'Otros';
 
-$lang['maintenances'] = 'Manteniments';
- $lang['externalid_menu'] = 'Típus Identificadors externs';
- $lang['organizationalunit_menu'] = 'Unitats Organitzatives';
- $lang['location_menu'] = 'Espais';
- $lang['brand_menu'] = 'Marques';
- $lang['model_menu'] = 'Models';
- $lang['material_menu'] = 'Tipus Material';
- $lang['provider_menu'] = 'Proveïdors';
- $lang['money_source_menu'] = 'Origen Diners';
+$lang['maintenances'] = 'Mantenimientos';
+ $lang['externalid_menu'] = 'Tipo de identificador externo';
+ $lang['organizationalunit_menu'] = 'Unidades organizativas';
+ $lang['location_menu'] = 'Espacis';
+ $lang['brand_menu'] = 'Marcas';
+ $lang['model_menu'] = 'Modelos';
+ $lang['material_menu'] = 'Tipo de material';
+ $lang['provider_menu'] = 'Proveidores';
+ $lang['money_source_menu'] = 'Origen del dinero';
 
 $lang['reports'] = 'Informes';
- $lang['global_reports'] = 'Informes globals';
- $lang['reports_by_organizationalunit'] = 'Informes per unitat organitzativa';
+ $lang['global_reports'] = 'Informes globales';
+ $lang['reports_by_organizationalunit'] = 'Informes por unidad organizativa';
 
-$lang['managment'] = 'Gestió';
- $lang['users'] = 'Usuaris';
- $lang['groups'] = 'Grups';
- $lang['preferences'] = 'Preferències';
+$lang['managment'] = 'Gestión';
+ $lang['users'] = 'Usuarios';
+ $lang['groups'] = 'Grupos';
+ $lang['preferences'] = 'Preferencias';
 
 //ERRORS
-$lang['404_page_not_found'] = '404 Pàgina no trobada';
-$lang['404_page_not_found_message'] = "La pàgina que heu demanat no s'ha pogut trobar";
-$lang['table_not_found'] = 'Taula no trobada';
-$lang['table_not_found_message'] = "La taula no s'ha pogut trobar";
+$lang['404_page_not_found'] = '404 Página no encontrada';
+$lang['404_page_not_found_message'] = 'La página que habeis pedido no se ha podido encontrar';
+$lang['table_not_found'] = 'Tabla no encontrada';
+$lang['table_not_found_message'] = 'La tabla no se ha podido encontrar';
 
  
 //OPTIONS
-$lang['Good'] = 'Bo';
+$lang['Good'] = 'Bueno';
 $lang['Regular'] = 'Regular';
-$lang['Bad'] = 'Dolent';
+$lang['Bad'] = 'Malo';
 $lang['Yes'] = 'Si';
 $lang['No'] = 'No';
 
 //SUPPORTED LANGUAGES
 $lang['language'] = 'Idioma';
-$lang['catalan'] = 'Català';
-$lang['spanish'] = 'Castellà';
-$lang['english'] = 'Anglès';
+$lang['catalan'] = 'Catalan';
+$lang['spanish'] = 'Castellano';
+$lang['english'] = 'Inglés';
 
-$lang['ip_address'] = 'Adreça IP';
-$lang['username'] = "Nom d'usuari";
-$lang['email'] = 'Correu electrònic';
-$lang['activation_code'] = "Codi d'activació";
+$lang['ip_address'] = 'Dirección IP';
+$lang['username'] = "Nombre de usuario";
+$lang['email'] = 'Correo electrónico';
+$lang['activation_code'] = "Códi de activación";
 $lang['forgotten_password_code'] = 'Codi paraula de pas oblidada';
 $lang['forgotten_password_time'] = 'Temps de la paraula de pas oblidada' ;
 $lang['remember_code'] = 'Codi de recuperació';

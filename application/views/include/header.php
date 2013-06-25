@@ -145,14 +145,15 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang('language');?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="<?=base_url()?>index.php/main/inventory_object/?idioma=catalan"><?php echo lang('catalan');?></a></li>
-            <li><a href="<?=base_url()?>index.php/main/inventory_object/?idioma=spanish"><?php echo lang('spanish');?></a></li>
-            <li><a href="<?=base_url()?>index.php/main/inventory_object/?idioma=english"><?php echo lang('english');?></a></li>
+            <li><a href="<?=base_url()?>index.php/main/change_language/catalan"><?php echo lang('catalan');?></a></li>
+            <li><a href="<?=base_url()?>index.php/main/change_language/spanish"><?php echo lang('spanish');?></a></li>
+            <li><a href="<?=base_url()?>index.php/main/change_language/english"><?php echo lang('english');?></a></li>
           </ul>
       </li>
      </ul>               
    </div>
    <div class="pull-right navbar-text">
+	   (<?php echo lang('language')." : ".lang($this->session->userdata('current_language'));?>)
      <img src="http://placehold.it/30x30">
       <a href="<?=base_url()?>index.php/main/user_info" style="color:grey"><?php echo $this->session->userdata('username');?></a>      
       <a href="<?=base_url()?>index.php/inventory_auth/logout"><?php echo lang('CloseSession');?></a>              
@@ -208,13 +209,13 @@ $('.reset').click(function(){
     
 <?php
 $current_table_current_fields_to_show= $current_table_name . "_current_fields_to_show";
-$js_array = json_encode($this->session->userdata($current_table_current_fields_to_show));
-echo "var selectedFields = ". $js_array . ";\n";     
+$js_array2 = json_encode($this->session->userdata($current_table_current_fields_to_show));
+echo "var selectedFields1 = ". $js_array2 . ";\n";     
 ?>
     
     $('option').each( 
      function() {
-           if (jQuery.inArray(this.value, selectedFields) !=-1) {
+           if (jQuery.inArray(this.value, selectedFields1) !=-1) {
              $(this).attr('selected', true);
              $('select').trigger('liszt:updated');
            }
