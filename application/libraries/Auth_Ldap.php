@@ -290,7 +290,11 @@ class Auth_Ldap {
         $results = ldap_get_entries($this->ldapconn, $search);		
 		
 		if($results['count'] === 1) {
-            return array($results[0]['givenname'][0],$results[0]['sn'][0],"",$results[0]['homephone'][0]);
+			if (array_key_exists('homephone', $results[0])) {
+				return array($results[0]['givenname'][0],$results[0]['sn'][0],"",$results[0]['homephone'][0]);
+			}	else {
+				return array($results[0]['givenname'][0],$results[0]['sn'][0],"","");
+			}
         }
         return false;
 	}
