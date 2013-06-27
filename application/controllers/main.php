@@ -94,7 +94,7 @@ class Main extends CI_Controller {
              $data['grocerycrudstate_text']=lang('grocerycrud_state_uploading_validation');
              break;
             case "upload_file":			 
-             $data['grocerycrudstate_text']=lan('grocerycrud_state_uploading_file');;
+             $data['grocerycrudstate_text']=lan('grocerycrud_state_uploading_file');
              break;
 			case "delete_file":			 
              $data['grocerycrudstate_text']=lang('grocerycrud_state_deleting_file');
@@ -154,6 +154,26 @@ class Main extends CI_Controller {
         
         $data['current_table_name'] = $this->current_table;
         
+        $data['current_organizational_unit'] = $this->session->userdata("current_organizational_unit");
+        
+        $data['current_role_id']   = $this->session->userdata('role');
+        $data['current_role_name'] = $this->_get_rolename_byId($data['current_role_id']);
+        
+        $show_organizational_units=true;
+        if ($data['current_role_name'] == $this->config->item('organizationalunit_group') )
+			$show_organizational_units=false;
+        $data['show_organizational_units'] =$show_organizational_units;
+        
+        $show_maintenace_menu=true;
+        if ($data['current_role_name'] == $this->config->item('organizationalunit_group') )
+			$show_maintenace_menu=false;
+        $data['show_maintenace_menu'] =$show_maintenace_menu;
+        
+        $show_managment_menu=true;
+        if ($data['current_role_name'] == $this->config->item('organizationalunit_group') )
+			$show_managment_menu=false;
+        $data['show_managment_menu'] =$show_managment_menu;
+        
         //DEBUGGING PURPOSES
         if ($this->config->item('debug')) {
 		 $data['debug']=true;	
@@ -210,6 +230,14 @@ class Main extends CI_Controller {
 		$this->session->set_userdata('current_language', $language);
 		redirect($_SERVER[‘HTTP_REFERER’]);
 	}
+	
+	public function update_current_organizational_unit()
+	{
+		$current_selected_organizational_unit = $this->input->post('current_selected_organizational_unit');
+		$this->session->set_userdata("current_organizational_unit",
+									 $current_selected_organizational_unit);
+		redirect("main/inventory_object", 'refresh');
+	}
     
     //UPDATE SESSION VARIABLES WITH COLUMNS TO SHOW
     public function update_displayed_fields()
@@ -232,7 +260,6 @@ class Main extends CI_Controller {
 				break;
 			case "externalIDType":
 				if (!$skip) {
-					$this->session->unset_userdata("externalIDType_current_fields_to_show");
 					$this->session->set_userdata("externalIDType_current_fields_to_show",
 									 $selected_columns);			 
 				}
@@ -327,9 +354,8 @@ class Main extends CI_Controller {
 		$image_crud = new image_CRUD();
 		
 		//CHECK IF USER IS READONLY --> unset upload & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$image_crud->unset_upload();
 			$image_crud->unset_delete();
 		}
@@ -519,9 +545,8 @@ class Main extends CI_Controller {
 		}
 		
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -558,6 +583,8 @@ class Main extends CI_Controller {
         $this->grocery_crud->display_as('preservationState',lang('preservationState'));                
         $this->grocery_crud->display_as('file_url',lang('file_url'));
         $this->grocery_crud->display_as('OwnerOrganizationalUnit',lang('OwnerOrganizationalUnit'));
+        $this->grocery_crud->display_as('mainOrganizationaUnitId',lang('mainOrganizationaUnitId'));
+        
 	
         //Establish fields/columns order and wich camps to show
         $this->grocery_crud->columns($this->session->userdata('inventory_object_current_fields_to_show'));       
@@ -588,6 +615,9 @@ class Main extends CI_Controller {
         
         //ORGANIZATIONAL UNIT
         $this->grocery_crud->set_relation_n_n('OwnerOrganizationalUnit', 'inventory_object_organizational_unit', 'organizational_unit', 'organitzational_unitId', 'inventory_objectId', 'name','priority');
+        
+        //MAIN ORGANIZATIONAL UNIT
+        $this->grocery_crud->set_relation('mainOrganizationaUnitId','organizational_unit','{name}',array('markedForDeletion' => 'n'));
         
         //LOCATION
         $this->grocery_crud->set_relation('location','location','{name}',array('markedForDeletion' => 'n'));
@@ -640,6 +670,17 @@ class Main extends CI_Controller {
         
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+     
+		$current_organizational_unit = $this->session->userdata("current_organizational_unit");
+        if ($current_organizational_unit != "all")
+			$this->grocery_crud->where('`inventory_object`.mainOrganizationaUnitId',$current_organizational_unit);    
+		
+		$current_role_id   = $this->session->userdata('role');	
+		$current_role_name = $this->_get_rolename_byId($current_role_id);
+        
+        if ($current_role_name == $this->config->item('organizationalunit_group') ) {
+			$this->grocery_crud->field_type('mainOrganizationaUnitId', 'hidden', $current_organizational_unit);
+		}
         
         $output = $this->grocery_crud->render();
               
@@ -678,22 +719,32 @@ class Main extends CI_Controller {
             
         $data['not_show_header2']=true;
         
-        $current_roles = array();
-        $current_roles_ids = (array) $this->session->userdata('role');
-        foreach ($current_roles_ids as $current_roles_id) {
-			$current_roles[]=$this->_get_rolename_byId($current_roles_id);
-		}
-		
+        $current_rol_id = $this->session->userdata('role');
+		$current_role_name = $this->_get_rolename_byId($current_rol_id);
         $data['institution_name'] = $this->config->item('institution_name');
         $data['grocerycrudstate']=true;
         $data['grocerycrudstate_text']=lang('user_info_title');
-
+        $user_groups_in_database= $this->ion_auth->get_users_groups()->result();
+        $user_groups_in_database_names=array();
+        foreach ($user_groups_in_database as $user_group_in_database) {
+			$user_groups_in_database_names[]=$user_group_in_database->name;
+		}
+		
+		$userid=$this->session->userdata('user_id');
+		$user=$this->ion_auth->user($userid)->row();
+		
+		//print_r($user);
+        
         $data['fields']=array (
-			lang('user_id_title') =>  $this->session->userdata('user_id'),
+			lang('user_id_title') => $userid,
 			lang('username_title') => $this->session->userdata('username'),
+			lang('name_title') => $user->first_name,
+			lang('surname_title') => $user->last_name,
 			lang('email_title') => $this->session->userdata('email'),
-			lang('roles_title') => implode(", ",$current_roles),
+			lang('user_groups_in_database') => implode(", ",$user_groups_in_database_names),
+			lang('rol_title') => $current_role_name,
 			lang('realm_title') => $this->session->userdata('default_realm'),
+			lang('main_user_organizational_unit') => $this->inventory_Model->get_main_organizational_unit_name_from_userid($userid),
 			lang('inventory_object_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_inventory_object')),
 			lang('externalIDType_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_externalIDType')),
 			lang('organizational_unit_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_organizational_unit')),
@@ -717,7 +768,7 @@ class Main extends CI_Controller {
 		
 		$roles = (array) $this->config->item('roles');
 		
-		return $roles[$id];
+		return $roles[(int) $id];
 	}
     
     //
@@ -742,6 +793,17 @@ class Main extends CI_Controller {
      	$defaultvalues['regular_translated']= lang('Regular');
      	$defaultvalues['yes_translated']= lang('Yes');
      	$defaultvalues['no_translated']= lang('No');
+     	
+     	//ORGANIZATIONAL UNIT
+     	if ($this->session->userdata("current_organizational_unit")) {
+			$defaultvalues['defaultmainOrganizationaUnitId']=$this->session->userdata("current_organizational_unit");
+		}
+		
+	    $current_role_id   = $this->session->userdata('role');
+        $current_role_name = $this->_get_rolename_byId($current_role_id);
+		if ( $current_role_name == $this->config->item('organizationalunit_group')) {
+			$defaultvalues['disable_mainOrganizationaUnitId']=true;
+		}
      	
 		return $defaultvalues;
 		
@@ -798,7 +860,11 @@ class Main extends CI_Controller {
 		
 		$post_array['creationUserId'] = $this->session->userdata('user_id');
 		$post_array['lastupdateUserId'] = $this->session->userdata('user_id');
-		return from_date_to_unix($post_array);
+		
+		
+		return $post_array;
+		//TODO
+		//return from_date_to_unix($post_array);
     }
     
     //UPDATE AUTOMATIC FIELDS BEFORE UPDATE
@@ -808,8 +874,9 @@ class Main extends CI_Controller {
 		$post_array['last_update'] = $data;
 		
 		$post_array['lastupdateUserId'] = $this->session->userdata('session_id');
-		
-		return from_date_to_unix($post_array);
+		return $post_array;
+		//TODO:
+		//return from_date_to_unix($post_array);
     }
     
     
@@ -836,9 +903,8 @@ class Main extends CI_Controller {
 		}
 		
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -902,9 +968,8 @@ class Main extends CI_Controller {
 		}
 		
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -977,9 +1042,8 @@ class Main extends CI_Controller {
 		}
 		
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1050,9 +1114,8 @@ public function material()
        $this->grocery_crud->set_table($this->current_table);
        
        //CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1114,9 +1177,8 @@ public function brand()
 			redirect($this->login_page, 'refresh');
 	   }
 	   //CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1174,9 +1236,8 @@ public function model()
 			redirect($this->login_page, 'refresh');
 		}
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1237,9 +1298,8 @@ public function provider()
 			redirect($this->login_page, 'refresh');
 	   }	
 	   //CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1296,9 +1356,8 @@ public function money_source()
 			redirect($this->login_page, 'refresh');
 		}
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1353,9 +1412,8 @@ public function users() {
 			redirect($this->login_page, 'refresh');
 		}
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1406,12 +1464,17 @@ public function users() {
 
         
         $this->grocery_crud->field_type('password', 'password');
+        $this->grocery_crud->field_type('created_on', 'date_timestamp');
+		$this->grocery_crud->field_type('last_login', 'date_timestamp');
         
         $this->grocery_crud->unset_add_fields('ip_address','salt','activation_code','forgotten_password_code','forgotten_password_time','remember_code','last_login','created_on');
         $this->grocery_crud->unset_edit_fields('ip_address','salt','activation_code','forgotten_password_code','forgotten_password_time','remember_code','last_login','created_on');
 
 	    //GROUPS
         $this->grocery_crud->set_relation_n_n('groups', 'users_groups','groups', 'group_id', 'id', 'name');
+        
+        //USER MAIN ORGANIZATIONAL UNIT
+        $this->grocery_crud->set_relation('mainOrganizationaUnitId','organizational_unit','{name}',array('markedForDeletion' => 'n'));
 
         $output = $this->grocery_crud->render();
         
@@ -1428,9 +1491,8 @@ public function groups(){
 			redirect($this->login_page, 'refresh');
 		}
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
@@ -1452,8 +1514,6 @@ public function groups(){
        
        //Establish fields/columns order and wich camps to show
        $this->grocery_crud->columns($this->session->userdata('groups_current_fields_to_show'));
-       
-       $crud->field_type('created_on', 'date_timestamp');
        
        $this->grocery_crud->set_relation_n_n('users', 'users_groups','users', 'user_id', 'id', 'username');
             
@@ -1487,9 +1547,8 @@ public function devices() {
 			redirect($this->login_page, 'refresh');
 		}
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
-		$readonly_group = $this->config->item('readonly_group');;
-		if (!$this->ion_auth->in_group($readonly_group)) {
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
 			$this->grocery_crud->unset_add();
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
