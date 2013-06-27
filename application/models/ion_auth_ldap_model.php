@@ -46,6 +46,10 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 		parent::__construct();
 		//LOAD LDAP LIBRARY
 		$this->load->library('Auth_Ldap');		
+		$this->load->library('ion_auth');
+		
+		//DATABASE MODEL
+		$this->load->model('inventory_Model');
 	}
 
 	/**
@@ -147,8 +151,93 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 										  $this->config->item('default_language'));
 		}
 		
+		//GET DURRENT ROLE INFO
+		$current_rol_id = $this->session->userdata('role');
+		$current_role_name=$this->_get_rolename_byId($current_rol_id);
+		
+		
+		//SET DEFAULT CURRENT ORGANIZATIONAL UNIT
+		$current_organizational_unit="all";
+		
+		//CHECK USER ROLE: IF 
+		//$config['organizationalunit_group'] = "inventory_organizationalunit";
+		$organizationalunit_group=$this->config->item('organizationalunit_group');
+		
+		if ( $current_role_name == $organizationalunit_group) {
+			//OBTAIN current_organizational_unit from database
+			$current_organizational_unit=$this->inventory_Model->get_main_organizational_unit_from_userid($user->id);
+		}
+		
+		if (!$this->session->userdata("current_organizational_unit")) {
+			$this->session->set_userdata("current_organizational_unit",
+										  $current_organizational_unit);
+		}
+		
+		//SET CORRECT LDAP GRUPS IN DATABASE		
+		
+		//CHECK IF ROL EXISTS AS GROUP IN DATABASE
+		if (! $this->_check_if_group_exists($current_role_name)) {
+			//ADD ROLE AS GROUP AT DATABASE
+			$group = $this->ion_auth->create_group($current_role_name, "Automatic group added as ldap inventory role");
+			if(!$group) {
+				show_error($this->ion_auth->messages());
+			}
+		}
+		
+		//SET (IF NOT YET) LDAP ROLES AS DATABASE USER GROUPS
+		$group_id = $this->_get_group_id_by_group_name($current_role_name);
+		if (! $this->_check_if_user_group_exists($current_role_name) ) {
+			$this->add_to_group($group_id,$user->id);
+		}
+		
+		//USERS HAVE ONLY ON LDAP ROLE! -> DELETE OLD LDAP USERS GROUPS
+		$ldap_roles = (array) $this->config->item('roles');
+		$ldap_roles_without_current_role=array_diff($ldap_roles,(array) $current_role_name);
+		
+		$ldap_roles_database_keys=array();
+		foreach ($ldap_roles_without_current_role as $ldaprole){
+			$ldap_roles_database_keys[]=$this->_get_group_id_by_group_name($ldaprole);
+		}
+		
+		//REMOVE USER FROM OTHER LDAP GROUPS:
+		$this->remove_from_group($ldap_roles_database_keys, $user->id);
+		
+		
 		$this->_initialize_fields();
 		return TRUE;
+	}
+	
+	function _get_rolename_byId($id) {		
+		$roles = (array) $this->config->item('roles');
+		return $roles[(int) $id];
+	}
+	
+	protected function _get_group_id_by_group_name ($groupname) {
+		$groups = $this->ion_auth->groups()->result();
+		foreach ($groups as $group) {
+			if ( $group->name == $groupname )
+				return $group->id;
+		}
+		return false;
+	}
+	
+	protected function _check_if_group_exists($groupname) {
+		$groups = $this->ion_auth->groups()->result();
+		foreach ($groups as $group) {
+			if ( $group->name == $groupname )
+				return true;
+		}
+		return false;
+	}
+	
+	protected function _check_if_user_group_exists($groupname) {
+		$usergroups=$this->ion_auth->get_users_groups()->result();
+		foreach ($usergroups as $usergroup) {
+			if ( $usergroup->name == $groupname ) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected function _initialize_fields() {
