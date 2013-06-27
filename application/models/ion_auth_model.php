@@ -793,7 +793,10 @@ class Ion_auth_model extends CI_Model
 				}
 			}
 		}
-
+                 
+                if(is_null($email)){
+                	$email=''; 
+		  }
 		// IP Address
 		$ip_address = $this->_prepare_ip($this->input->ip_address());
 		$salt       = $this->store_salt ? $this->salt() : FALSE;
