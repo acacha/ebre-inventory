@@ -2,7 +2,7 @@
 
 $(document).ready(function(){
  
- //CHECK IF WE SET READ ONLY UR HASH (#readonly)
+//CHECK IF WE SET READ ONLY URL HASH (#readonly)
  if(window.location.hash.indexOf('readonly') != -1){
    //disable all input html elements:
    $('#main-table-box').find('input, textarea, button, select').attr('disabled','disabled');
@@ -40,6 +40,15 @@ $(document).ready(function(){
     $('#field-externalIDType').trigger('liszt:updated');
    }
  } 
+ 
+ //field-mainOrganizationaUnitId
+ if (document.getElementById('field-mainOrganizationaUnitId') != null) {
+  var mainOrganizationaUnitId = document.getElementById('field-mainOrganizationaUnitId');
+  if (mainOrganizationaUnitId.value == "") {
+   document.getElementById('field-mainOrganizationaUnitId').value = '<?php echo $defaultmainOrganizationaUnitId ?>';
+   $('#field-mainOrganizationaUnitId').trigger('liszt:updated');
+  }
+ }
 
  
  //LOCATION

@@ -108,6 +108,7 @@ CREATE TABLE IF NOT EXISTS `inventory_object` (
   `markedForDeletion` enum('n','y') NOT NULL DEFAULT 'n',
   `markedForDeletionDate` datetime NOT NULL,
   `file_url` varchar(250) NOT NULL,
+  `mainOrganizationaUnitId` int(11) NOT NULL,
   PRIMARY KEY (`inventory_objectId`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -253,6 +254,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `ip_address` varbinary(16) NOT NULL,
   `username` varchar(100) NOT NULL,
   `password` varchar(80) NOT NULL,
+  `mainOrganizationaUnitId` int(11) NOT NULL,
   `salt` varchar(40) DEFAULT NULL,
   `email` varchar(100) NOT NULL,
   `activation_code` varchar(40) DEFAULT NULL,
