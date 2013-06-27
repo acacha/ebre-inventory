@@ -100,9 +100,11 @@
     <a class="brand" href="#"> <i class="icon-home"> </i><?php echo lang('inventory');?></a>
   
     <div class="nav-collapse collapse">
+     
             
      <ul class="nav">
       <li class="active"> <a href='<?php echo site_url('main/inventory_object')?>'><?php echo lang('inventory');?></a> </li>
+    <!--    
        <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-toogle="tab"><?php echo lang('devices');?> <b class="caret"></b></a>
         <ul class="dropdown-menu">
@@ -110,7 +112,9 @@
          <li><a href='<?php echo site_url('main/todo')?>'><?php echo lang('others');?></a></li>
         </ul>
        </li>
-       
+     -->  
+      <?php if ($show_maintenace_menu): ?>                   
+ 
       <li class="dropdown">
        <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-toogle="tab"><?php echo lang('maintenances');?> <b class="caret"></b></a>
        <ul class="dropdown-menu">
@@ -124,6 +128,8 @@
          <li><a href='<?php echo site_url('main/money_source')?>'><?php echo lang('money_source_menu');?></a></li>              
        </ul>                                                                                                                                                                                                                                                                                                                                      
       </li>
+      <?php endif; ?>
+
       <li class="dropdown">
        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang('reports');?> <b class="caret"></b></a>
         <ul class="dropdown-menu">
@@ -133,6 +139,7 @@
         </ul>
       </li>
       
+      <?php if ($show_managment_menu): ?>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang('managment');?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
@@ -141,6 +148,8 @@
             <li><a href='<?php echo site_url('main/preferences')?>'><?php echo lang('preferences');?></a></li>                                            
           </ul>
       </li>
+      <?php endif; ?>
+
                                                                                               
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang('language');?> <b class="caret"></b></a>
@@ -271,14 +280,20 @@ font-size: xx-small;
    </form>
    <div style='height:100px;'></div>
   </div> 
- 
+
+<?php if ($show_organizational_units): ?>                   
 <?php if (@$organizational_units): ?>                   
  <h3 style="font-size: x-small"><?php echo lang('Filter by organizational units'); ?></h3>
   <div style="font-size: xx-small;">
-   <form action="/index.php/main/TODO2" method="post" accept-charset="utf-8">	
-   <select id="organizational_units" data-placeholder="<?php echo lang('choose_organization_unit'); ?>" style="width:500px" class="chosen">
+   <form action="<?=base_url()?>index.php/main/update_current_organizational_unit" method="post" accept-charset="utf-8">	
+   <select id="organizational_units" data-placeholder="<?php echo lang('choose_organization_unit'); ?>" style="width:500px" class="chosen" name="current_selected_organizational_unit">
+    <option value="all" ><?php echo lang('all_organizational_units'); ?></option>
     <?php foreach($organizational_units as $row): ?>
-     <option value="<?php echo $row['organizational_unitId']; ?>" ><?php echo $row['name']; ?></option>
+	  <?php if ( $current_organizational_unit == $row['organizational_unitId']): ?>                   
+	    <option value="<?php echo $row['organizational_unitId']; ?>" selected="selected"><?php echo $row['name']; ?></option>
+	  <?php else: ?>
+		<option value="<?php echo $row['organizational_unitId']; ?>" ><?php echo $row['name']; ?></option>
+	  <?php endif; ?>  	
     <?php endforeach; ?>
    </select>
    <br/><button class="apply"><?php echo lang('apply'); ?></button>    
@@ -286,6 +301,7 @@ font-size: xx-small;
   <div style='height:100px;'></div>
  </div>
 <?php endif; ?>  
+<?php endif; ?>
 </div> 
 
 </div>

@@ -111,7 +111,7 @@ $config['default_preservationState'] = "Good";
 |
 | Value of default marked for deletion field
 | 
-| Example: Good
+| Example: n
 */
 $config['default_markedfordeletionvalue'] = "n";
 
@@ -195,11 +195,21 @@ $config['poweruser_group'] = "inventory_poweruser";
 */
 $config['dataentry_group'] = "inventory_dataentry";
 
-//TODO
-//ROLE: ONLY ADD/MODIFIY/DELETE OBJECTS OF HIS ORGANIZATIONAL_UNIT
-//ADD FIELD TO USERS DATABASE: organizationalUnitID?
-//MULTIPLE ORGANIZATIONAL UNITS? -->
-// CREATE DATABASE users_organizationunits (relation_n_n)
+
+/*
+|--------------------------------------------------------------------------
+| GROUP WITH organizationalunit ROLE
+|--------------------------------------------------------------------------
+|
+| ROLE: ONLY ADD/MODIFIY/DELETE OBJECTS OF HIS ORGANIZATIONAL_UNIT
+| OBJECTS HAVE: mainOrganizationalUnitID
+| TODO:
+| MULTIPLE ORGANIZATIONAL UNITS? -->
+|  CREATE DATABASE users_organizationunits (relation_n_n)
+| 
+| Example: inventory_organizationalunit
+*/
+$config['organizationalunit_group'] = "inventory_organizationalunit";
 
 
 
@@ -268,7 +278,7 @@ $config['default_fields_table_inventory_object'] = array (
     'materialId',
     'brandId',
     'modelId',
-    'OwnerOrganizationalUnit',
+    'mainOrganizationaUnitId',
     'entryDate',  
     'last_update',
     'lastupdateUserId',
