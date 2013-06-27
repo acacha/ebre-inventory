@@ -108,6 +108,7 @@ CREATE TABLE IF NOT EXISTS `inventory_object` (
   `markedForDeletion` enum('n','y') NOT NULL DEFAULT 'n',
   `markedForDeletionDate` datetime NOT NULL,
   `file_url` varchar(250) NOT NULL,
+  `mainOrganizationaUnitId` int(11) NOT NULL,
   PRIMARY KEY (`inventory_objectId`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
