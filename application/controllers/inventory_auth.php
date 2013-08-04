@@ -27,8 +27,7 @@ include 'auth.php';
 class Inventory_auth extends Auth {
 	
     public $realms = "mysql,ldap";
-
-	
+    
     function __construct() {
 		
 		parent::__construct();
@@ -45,6 +44,27 @@ class Inventory_auth extends Auth {
         //Owerwrite values
         $this->login_page="inventory_auth/login";
         $this->after_succesful_login_page="main";
+        $this->forgot_password_page ="inventory_auth/forgot_password";
+        
+        /*
+    public $auth_page = "inventory_auth";
+	public $login_page = "inventory_auth/login";
+	public $login_view = "inventory_auth/login";
+	public $login_index_view = "inventory_auth/index";
+    public $after_succesful_login_page = "/";
+    public $change_password_page ="inventory_auth/change_password";
+    public $change_password_view ="inventory_auth/change_password";
+    public $forgot_password_page ="inventory_auth/forgot_password";
+    
+    public $reset_password_page ="inventory_auth/reset_password/";
+    public $reset_password_view ="inventory_auth/reset_password";
+    public $deactive_user_view ="inventory_auth/deactivate_user";
+    
+    public $create_user_view ="inventory_auth/create_user";    
+    public $edit_user_view = "inventory_auth/edit_user";
+    public $create_group_view ="inventory_auth/create_group";    
+    public $edit_group_view = "inventory_auth/edit_group";
+*/
         
         if ($this->config->item('realms')!="") {
 			$this->realms = explode(",",$this->config->item('realms'));
@@ -136,4 +156,11 @@ function logout()  {
 	$this->session->set_flashdata('message', $this->ion_auth->messages());
 	redirect($this->login_page, 'refresh');
 }
+
+/*
+ * function forgot_password()
+	{
+		echo "1";
+	}
+	*/
 }

@@ -128,13 +128,15 @@ $lang['change_password_validation_new_password_label']         = 'New Password';
 $lang['change_password_validation_new_password_confirm_label'] = 'Confirm New Password';
 
 // Forgot Password
-$lang['forgot_password_heading']                 = 'Forgot Password';
-$lang['forgot_password_subheading']              = 'Please enter your %s so we can send you an email to reset your password.';
-$lang['forgot_password_email_label']             = '%s:';
-$lang['forgot_password_submit_btn']              = 'Submit';
-$lang['forgot_password_validation_email_label']  = 'Email Address';
-$lang['forgot_password_username_identity_label'] = 'Username';
-$lang['forgot_password_email_identity_label']    = 'Email';
+$lang['forgot_password_heading']                 = 'Paraula de pas oblidada';
+$lang['forgot_password_subheading']              = "Si us plau ompliu el següent formulari per tal d'enviar-vos un correu electrònic amb la nova paraula de pas";
+$lang['forgot_password_email_label']             = '%s';
+$lang['forgot_password_submit_btn']              = 'Enviar';
+$lang['forgot_password_validation_email_label']  = 'Adreça de correu electrònic';
+$lang['forgot_password_username_identity_label'] = "Nom d'usuari";
+$lang['forgot_password_email_identity_label']    = 'Correu electrònic';
+$lang['forgot_password_email_not_found']    = 'El correu electrònic no pertany a cap usuari de la base de dades!';
+$lang['forgot_password_email_found_more_than_one'] = "Hi ha més d'un usuari amb aquest correu electrònic. Aviseu al administrador de la base de dades per corregir l'error";
 
 
 // Reset Password
