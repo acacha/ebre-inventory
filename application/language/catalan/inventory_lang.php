@@ -59,6 +59,9 @@ $lang['externalID'] = 'Id extern';
 $lang['externalIDType'] = 'Tipus Id extern';
 $lang['Id'] = 'Id';
 $lang['id'] = 'Id';
+$lang['userId'] = "Id d'usuari";
+$lang['theme'] = 'Tema';
+
 
 $lang['code'] = 'Codi';
 $lang['parentLocation'] = 'Espai pare';
@@ -76,6 +79,7 @@ $lang['provider_subject']     = 'proveïdor';
 $lang['money_source_id_subject'] = 'origen dels diners';
 $lang['users_subject'] = 'usuari';
 $lang['groups_subject'] = 'grup';
+$lang['user_preferences_subject'] = "preferència d'usuari";
 
 //BUTTONS
 $lang['reset'] = 'Reset';

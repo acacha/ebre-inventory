@@ -288,6 +288,10 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 		if (!$this->session->userdata("groups_current_fields_to_show")) {
 			$this->session->set_userdata("groups_current_fields_to_show",
 									 $this->config->item('default_fields_table_groups'));
+		}
+		if (!$this->session->userdata("user_preferences_current_fields_to_show")) {
+			$this->session->set_userdata("user_preferences_current_fields_to_show",
+									 $this->config->item('default_fields_table_user_preferences'));
 		}																																
 									 
 	}

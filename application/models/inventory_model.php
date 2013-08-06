@@ -15,7 +15,18 @@ class inventory_Model  extends CI_Model  {
         parent::__construct();
         $this->load->database();
     }
-    
+
+	function get_user_theme($userid){
+		$this->db->select('theme');
+		$this->db->where('userId',$userid);
+		$query = $this->db->get('user_preferences');
+		return $query->row()->theme;
+	}
+	
+	function get_user_theme_by_username($username){
+		$userid="TODO";
+		return $this->get_user_theme($userid);
+	}
 	
 	function get_organizational_units(){
 		

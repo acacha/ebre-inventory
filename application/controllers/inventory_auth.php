@@ -1,19 +1,19 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
- * This file is part of Auth_Ldap.
+ * This file is part of Ebre-inventory.
 
-    Auth_Ldap is free software: you can redistribute it and/or modify
+    Ebre-inventory is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Auth_Ldap is distributed in the hope that it will be useful,
+    Ebre-inventory is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Auth_Ldap.  If not, see <http://www.gnu.org/licenses/>.
+    along with Ebre-inventory.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -26,6 +26,7 @@ include 'auth.php';
  
 class Inventory_auth extends Auth {
 	
+	//Default accepted realms
     public $realms = "mysql,ldap";
     
     function __construct() {

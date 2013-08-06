@@ -120,13 +120,13 @@ class Main extends CI_Controller {
              $data['grocerycrudstate_text']=lang('grocerycrud_state_printing');
              break;    
 		   }
-    
-        $data['inventory_js_files'] = array(
-            '//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.min.js',
+		   
+		$data['inventory_js_files'] = array(
+            '//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.min.js',            
             base_url('assets/js/bootstrap.min.js'),
             base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'),
             base_url('assets/js/jquery-ui.min.js'),
-            base_url('assets/js/jquery-chosen-sortable.js')
+            base_url('assets/js/jquery-chosen-sortable.js'),
             );
         $data['inventory_css_files'] = array(
             base_url('assets/css/bootstrap.min.css'),
@@ -134,8 +134,10 @@ class Main extends CI_Controller {
             base_url('assets/css/font-awesome.css'),
             base_url('assets/css/custom.css'),
             base_url('assets/css/jquery.multiselect.css'),
+            base_url('assets/grocery_crud/themes/flexigrid/css/flexigrid.css'),
             base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'),
             'http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css'
+            
             );                 
             
         $data['fields_in_table'] = $this->db->list_fields($this->current_table);
@@ -328,6 +330,13 @@ class Main extends CI_Controller {
 				}
 				redirect("main/groups", 'refresh');
 				break;	
+			case "user_preferences":
+				if (!$skip) {
+					$this->session->set_userdata("user_preferences_current_fields_to_show",
+									 $selected_columns);
+				}
+				redirect("main/user_preferences", 'refresh');
+				break;		
 			default:
 				redirect("inventory_errors/tablenotfound", 'refresh');
 				break;
@@ -368,6 +377,8 @@ class Main extends CI_Controller {
 		$image_crud->set_ordering_field('priority');
 		$image_crud->set_image_path('assets/uploads/files');
 		$image_crud->set_relation_field('inventory_objectId');
+		
+		$this->set_theme($this->grocery_crud);
 	
 		$output = $image_crud->render();
 	
@@ -521,6 +532,8 @@ class Main extends CI_Controller {
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
         
+        $this->set_theme($this->grocery_crud);
+        
         $output = $this->grocery_crud->render();
         
         $this->load_header($output);
@@ -532,6 +545,122 @@ class Main extends CI_Controller {
         $this->load->view('inventory_object_view.php',$output);        
         $this->load->view('include/footer');          
     }
+    
+    public function user_preferences() {
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect($this->login_page, 'refresh');
+		}
+		
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
+			$this->grocery_crud->unset_add();
+			$this->grocery_crud->unset_edit();
+			$this->grocery_crud->unset_delete();
+		}
+		
+		$this->grocery_crud->set_table('user_preferences');
+        
+        //Establish subject:
+        $this->grocery_crud->set_subject(lang('user_preferences_subject'));
+                        
+        //COMMON_COLUMNS               
+        $this->set_common_columns_name();
+
+        //ESPECIFIC COLUMNS                                            
+        $this->grocery_crud->display_as('userId',lang('userId'));
+        $this->grocery_crud->display_as('language',lang('language'));
+        $this->grocery_crud->display_as('theme',lang('theme'));
+        
+        //Establish fields/columns order and wich camps to show
+        $this->grocery_crud->columns($this->session->userdata('user_preferences_current_fields_to_show'));       
+        
+        //Camps obligatoris
+        $this->grocery_crud->required_fields('userId','markedForDeletion','language','theme');
+        
+        $this->grocery_crud->unset_add_fields('last_update','manualLast_update');
+        
+        //ExternID types
+        $this->grocery_crud->set_relation('userId','users','{username}');
+        
+        //Example de validació. Natural no zero
+        //$this->grocery_crud->set_rules('quantityInStock','Quantitat','is_natural_no_zero');
+		
+		//CREATION USER ID
+    	//DEFAULT VALUE= LOGGED USER. ONLY WHEN ADDING
+		//EDITING: SHOW CURRENT VALUE READONLY
+        //$this->grocery_crud->callback_add_field('creationUserId',array($this,'add_field_callback_creationUserId'));
+        $this->grocery_crud->callback_edit_field('creationUserId',array($this,'edit_field_callback_creationUserId'));
+		
+		//ENTRY DATE
+		//DEFAULT VALUE=NOW. ONLY WHEN ADDING
+		//EDITING: SHOW CURRENT VALUE READONLY
+		$this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
+		$this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
+		
+		//LAST UPDATE
+		//DEFAULT VALUE=NOW. ONLY WHEN ADDING
+		//EDITING: SHOW CURRENT VALUE READONLY
+		$this->grocery_crud->callback_add_field('last_update',array($this,'add_callback_last_update'));
+		$this->grocery_crud->callback_edit_field('last_update',array($this,'edit_callback_last_update'));
+		
+		//$this->grocery_crud->callback_add_field('markedForDeletion',array($this,'add_field_callback_markedForDeletionDate'));
+		$this->grocery_crud->callback_column('price',array($this,'valueToEuro'));
+		$this->grocery_crud->callback_field('Link Imatges',array($this,'field_callback_Link'));
+		
+		//UPDATE AUTOMATIC FIELDS
+		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
+		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+		
+		//GRAVATAR? TODO file upload field?
+        //$this->grocery_crud->set_field_upload('file_url','assets/uploads/files');
+        
+        //USER ID
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        
+        //LAST UPDATE USER ID
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        
+        $this->set_theme($this->grocery_crud);
+     
+        $output = $this->grocery_crud->render();
+              
+        $this->load_header($output);
+               
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+                
+        //GROCERYCRUD VIEW
+        $this->load->view('inventory_object_view.php',$output);        
+                
+        $this->load->view('include/footer');   
+	}
+    
+    public function preferences() {
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect($this->login_page, 'refresh');
+		}
+		
+		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
+		$readonly_group = $this->config->item('readonly_group');
+		if ($this->ion_auth->in_group($readonly_group)) {
+			//TODO
+		}
+		
+		$admin_group = $this->config->item('admin_group');
+		
+		if ($this->ion_auth->in_group($admin_group)) {
+			//Manage all user preferences:
+			//$this->user_preferences();
+			redirect("main/user_preferences", 'refresh');
+		}
+		
+		//Other groups
+	}
     
  /***************************************************************************************************************************************/
  /*                                         Classe inventari on forma tota la taula                                                     */               
@@ -681,6 +810,8 @@ class Main extends CI_Controller {
         if ($current_role_name == $this->config->item('organizationalunit_group') ) {
 			$this->grocery_crud->field_type('mainOrganizationaUnitId', 'hidden', $current_organizational_unit);
 		}
+		
+		$this->set_theme($this->grocery_crud);
         
         $output = $this->grocery_crud->render();
               
@@ -695,27 +826,30 @@ class Main extends CI_Controller {
         $this->load->view('include/footer');   
     }
     
+    protected function set_theme($grocery_crud) {
+		
+		$userid = $this->session->userdata('user_id');
+		$user_theme = $this->inventory_model->get_user_theme($userid);
+		
+		$all_themes = (array) $this->config->item('supported_themes');
+		if (!in_array($user_theme, $all_themes)) {
+			//DEFAULT THEME IF USER NOT CHOOSED ONE
+			$user_theme = $this->config->item('default_theme');
+		}
+
+		$grocery_crud->set_theme($user_theme);
+	}
+    
     function user_info() {
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
 			redirect($this->login_page, 'refresh');
 		}
-		 $data['inventory_js_files'] = array(
-            base_url('assets/grocery_crud/js/jquery-1.8.2.min.js'),
-            '//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.min.js', 
-            base_url('assets/js/bootstrap.min.js'), 
-            base_url('assets/js/custom.js'),
-            base_url('assets/grocery_crud/themes/flexigrid/js/jquery.form.js'),
-            base_url('assets/grocery_crud/themes/flexigrid/js/flexigrid-edit.js')
-            );
-        $data['inventory_css_files'] = array(
-            base_url('assets/css/bootstrap.min.css'),
-            base_url('assets/css/bootstrap-responsive.min.css'),
-            base_url('assets/css/font-awesome.css'),
-            base_url('assets/css/custom.css'),
-            base_url('/assets/grocery_crud/themes/flexigrid/css/flexigrid.css')
-            );           
+		
+		$data['inventory_userinfo_js_files'] = array(
+           base_url('assets/grocery_crud/js/jquery-1.8.2.min.js'),
+		);
             
         $data['not_show_header2']=true;
         
@@ -757,8 +891,7 @@ class Main extends CI_Controller {
 			lang('users_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_users')),
 			lang('groups_fields_title') => implode(", ",(array) $this->config->item('default_fields_table_groups'))
         );
-		$this->load->view('include/header',$data);
-		
+		$this->load_header($data,false);
 		
 		$this->load->view('user_info_view'); 
 		$this->load->view('include/footer'); 
@@ -947,6 +1080,8 @@ class Main extends CI_Controller {
 		
 		$this->grocery_crud->unset_add_fields('last_update');
 		
+		$this->set_theme($this->grocery_crud);
+		
         $output = $this->grocery_crud->render();
            
         $this->load_header($output);        
@@ -1018,6 +1153,8 @@ class Main extends CI_Controller {
         
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        
+        $this->set_theme($this->grocery_crud);
         
         $output = $this->grocery_crud->render();
            
@@ -1092,6 +1229,8 @@ class Main extends CI_Controller {
         
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        
+        $this->set_theme($this->grocery_crud);
                    
         $output = $this->grocery_crud->render();
         
@@ -1159,7 +1298,9 @@ public function material()
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
         
-       $output = $this->grocery_crud->render();
+        $this->set_theme($this->grocery_crud);
+        
+        $output = $this->grocery_crud->render();
 
 
         $this->load_header($output);          
@@ -1218,7 +1359,9 @@ public function brand()
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
         
-       $output = $this->grocery_crud->render();
+        $this->set_theme($this->grocery_crud);
+        
+        $output = $this->grocery_crud->render();
 
 
         $this->load_header($output);          
@@ -1282,7 +1425,9 @@ public function model()
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
         
-       $output = $this->grocery_crud->render();
+        $this->set_theme($this->grocery_crud);
+        
+        $output = $this->grocery_crud->render();
 
 
         $this->load_header($output);          
@@ -1339,6 +1484,7 @@ public function provider()
         //LAST UPDATE USER ID
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
         
+       $this->set_theme($this->grocery_crud); 
                                                           
        $output = $this->grocery_crud->render(); 
                                                    
@@ -1396,6 +1542,8 @@ public function money_source()
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
 		        
    		$this->grocery_crud->unset_add_fields('last_update');
+   		
+   		$this->set_theme($this->grocery_crud);
                                                            
         $output = $this->grocery_crud->render();
                 
@@ -1475,6 +1623,8 @@ public function users() {
         
         //USER MAIN ORGANIZATIONAL UNIT
         $this->grocery_crud->set_relation('mainOrganizationaUnitId','organizational_unit','{name}',array('markedForDeletion' => 'n'));
+        
+        $this->set_theme($this->grocery_crud);
 
         $output = $this->grocery_crud->render();
         
@@ -1516,6 +1666,8 @@ public function groups(){
        $this->grocery_crud->columns($this->session->userdata('groups_current_fields_to_show'));
        
        $this->grocery_crud->set_relation_n_n('users', 'users_groups','users', 'user_id', 'id', 'username');
+       
+       $this->set_theme($this->grocery_crud);
             
        $output = $this->grocery_crud->render();
        
@@ -1557,6 +1709,8 @@ public function devices() {
        $this->grocery_crud->set_table($this->current_table);       
        
        $this->set_common_columns_name();
+       
+       $this->set_theme($this->grocery_crud);
 
        $output = $this->grocery_crud->render();
        
