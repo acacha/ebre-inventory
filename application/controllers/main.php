@@ -836,6 +836,10 @@ class Main extends CI_Controller {
 			//DEFAULT THEME IF USER NOT CHOOSED ONE
 			$user_theme = $this->config->item('default_theme');
 		}
+		
+		if ($user_theme=="twitter-bootstrap") {
+			$grocery_crud = $grocery_crud->unset_bootstrap();
+		}
 
 		$grocery_crud->set_theme($user_theme);
 	}

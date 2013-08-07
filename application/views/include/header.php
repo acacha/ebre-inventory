@@ -57,29 +57,13 @@
 <style type="text/css">
      body {
         padding-top: 60px;
+        padding-bottom: 60px;
 		font-family: Arial;
                 font-size: 14px;
                
 		min-height:900
 		
-      }
-      
-	  
-     footer {
-		   
-		color: #666;
-		background: #222;
-		padding: 17px 0 18px 0;
-		border-top: 1px solid #000;
      }
-     
-    footer a {
-		color: #999;
-    }
-    
-    footer a:hover {
-         	color: #efefef;
-    }
     
 .navbar-text img {
   max-height:30px;
