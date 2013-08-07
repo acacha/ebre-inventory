@@ -151,7 +151,7 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 										  $this->config->item('default_language'));
 		}
 		
-		//GET DURRENT ROLE INFO
+		//GET CURRENT ROLE INFO
 		$current_rol_id = $this->session->userdata('role');
 		$current_role_name=$this->_get_rolename_byId($current_rol_id);
 		

@@ -648,7 +648,7 @@ class Main extends CI_Controller {
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
 		$readonly_group = $this->config->item('readonly_group');
 		if ($this->ion_auth->in_group($readonly_group)) {
-			//TODO
+			redirect($this->login_page, 'refresh');
 		}
 		
 		$admin_group = $this->config->item('admin_group');
@@ -660,6 +660,9 @@ class Main extends CI_Controller {
 		}
 		
 		//Other groups
+		//Edit only own user preferences
+		redirect("main/user_preferences/edit/".
+			$this->session->userdata('user_id'), 'refresh');
 	}
     
  /***************************************************************************************************************************************/
