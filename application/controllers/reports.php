@@ -31,7 +31,7 @@ class Reports extends CI_Controller {
 	public function load_header(){
     
         $data['inventory_js_files'] = array(
-            base_url('assets/grocery_crud/js/jquery-1.8.2.min.js'),
+            base_url('assets/grocery_crud/js/jquery-1.10.2.min.js'),
             '//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.min.js', 
             base_url('assets/js/bootstrap.min.js'), 
             base_url('assets/js/custom.js'),

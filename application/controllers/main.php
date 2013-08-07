@@ -848,7 +848,7 @@ class Main extends CI_Controller {
 		}
 		
 		$data['inventory_userinfo_js_files'] = array(
-           base_url('assets/grocery_crud/js/jquery-1.8.2.min.js'),
+           base_url('assets/grocery_crud/js/jquery-1.10.2.min.js'),
 		);
             
         $data['not_show_header2']=true;
