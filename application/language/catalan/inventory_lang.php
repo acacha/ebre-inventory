@@ -59,7 +59,7 @@ $lang['externalID'] = 'Id extern';
 $lang['externalIDType'] = 'Tipus Id extern';
 $lang['Id'] = 'Id';
 $lang['id'] = 'Id';
-$lang['userId'] = "Id d'usuari";
+$lang['userId'] = "Id usuari";
 $lang['theme'] = 'Tema';
 
 
@@ -79,7 +79,7 @@ $lang['provider_subject']     = 'proveïdor';
 $lang['money_source_id_subject'] = 'origen dels diners';
 $lang['users_subject'] = 'usuari';
 $lang['groups_subject'] = 'grup';
-$lang['user_preferences_subject'] = "preferència d'usuari";
+$lang['user_preferences_subject'] = "preferència usuari";
 
 //BUTTONS
 $lang['reset'] = 'Reset';
@@ -211,3 +211,17 @@ $lang['users_fields_title']="Camps per defecte dels usuaris";
 $lang['groups_fields_title']="Camps per defecte dels grups";
 
 $lang['come_back']="Tornar";
+
+$lang['user_preferences_admin message1']="Es mostren les preferències de tots els usuaris perque sou un usuari amb un rol que ho permet.";
+$lang['user_preferences_admin message2']="Podeu veure les vostres preferències ";
+$lang['user_preferences_admin message3']="Podeu editar les vostres preferències ";
+$lang['user_preferences_not_yet_message1']="Esteu utilitzant les preferències per defecte ja que encara no les heu definit.";
+$lang['user_preferences_not_yet_message2']="Podeu crear les vostres preferències ";
+$lang['here']="aquí";
+
+$lang['operation_not_allowed']="Operació no permesa";
+$lang['edit_not_allowed']="L'edició d'aquest registre no li està permesa al vostre usuari";
+$lang['insert_not_allowed']="L'inserció d'aquest registre no li està permesa al vostre usuari";
+
+$lang['verify_password']="Verificar paraula de pas";
+$lang['MainOrganizationaUnitId']="Unitat organitzativa";

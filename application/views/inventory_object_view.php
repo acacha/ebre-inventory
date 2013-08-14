@@ -24,7 +24,7 @@ suscipit faucibus urna.
 !-->
 
 <!-- End of header-->
-    <div style='height:30px;'></div>  
+    <div style='height:1px;'></div>  
     <div style="margin:10px;">
         <?php echo $output; ?>
     </div>

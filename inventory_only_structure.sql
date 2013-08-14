@@ -344,9 +344,27 @@ CREATE TABLE IF NOT EXISTS `model` (
   PRIMARY KEY (`modelId`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+-- --------------------------------------------------------
 --
--- Base de dades: `ebreinventory`
+-- Table structure for table `user_preferences`
 --
+
+CREATE TABLE IF NOT EXISTS `user_preferences` (
+  `user_preferencesId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `language` enum('catalan','spanish','english') NOT NULL DEFAULT 'catalan',
+  `theme` enum('flexigrid','datatables','twitter-bootstrap') NOT NULL DEFAULT 'flexigrid',
+  `description` text,
+  `entryDate` datetime NOT NULL,
+  `manualEntryDate` datetime NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `manualLast_update` datetime NOT NULL,
+  `creationUserId` int(11) DEFAULT NULL,
+  `lastupdateUserId` int(11) DEFAULT NULL,
+  `markedForDeletion` enum('n','y') NOT NULL DEFAULT 'n',
+  `markedForDeletionDate` datetime NOT NULL,
+  PRIMARY KEY (`user_preferencesId`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 

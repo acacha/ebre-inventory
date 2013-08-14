@@ -213,3 +213,7 @@ $lang['users_fields_title']="Camps per defecte dels usuaris";
 $lang['groups_fields_title']="Camps per defecte dels grups";
 
 $lang['come_back']="Tornar";
+
+
+$lang['user_preferences_admin message1']="All user preferences are show below because you are an admin user. You can edit your preferences ";
+$lang['here']="here";

@@ -4,11 +4,10 @@
       <i class="icon-check-empty icon-stack-base"></i>
       <i class="icon-remove"></i>
      </span>
-     <?php echo lang('404_page_not_found'); ?><br>
+     <?php echo lang('operation_not_allowed'); ?><br>
     </div>
 	<p class="alert alert-info">
      <i class="icon-info-sign"></i>
-			 <?php echo lang('404_page_not_found_message'); ?>	
+			 <?php echo lang('insert_not_allowed'); ?>	
     </p>
 </div>
-

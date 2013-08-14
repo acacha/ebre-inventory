@@ -135,7 +135,7 @@ $lang['No'] = 'No';
 
 //SUPPORTED LANGUAGES
 $lang['language'] = 'Idioma';
-$lang['catalan'] = 'Catalan';
+$lang['catalan'] = 'catalan';
 $lang['spanish'] = 'Castellano';
 $lang['english'] = 'Inglés';
 

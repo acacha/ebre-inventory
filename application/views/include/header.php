@@ -45,9 +45,11 @@
 <?php endforeach; ?>
 
 <!-- JS PROPIS userinfo-->
+<?php if (isset($inventory_userinfo_js_files)): ?>
 <?php foreach($inventory_userinfo_js_files as $file): ?>
     <script src="<?php echo $file; ?>"></script>
 <?php endforeach; ?>
+<?php endif; ?>
 
 <!-- JS PROPIS -->
 <?php foreach($inventory_js_files as $file): ?>
@@ -127,16 +129,18 @@
         </ul>
       </li>
       
-      <?php if ($show_managment_menu): ?>
+      
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang('managment');?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
+			  <?php if ($show_managment_menu): ?>
             <li><a href='<?php echo site_url('main/users')?>'><?php echo lang('users');?></a></li>
             <li><a href='<?php echo site_url('main/groups')?>'><?php echo lang('groups');?></a></li>
+			  <?php endif; ?>
             <li><a href='<?php echo site_url('main/preferences')?>'><?php echo lang('preferences');?></a></li>                                            
           </ul>
       </li>
-      <?php endif; ?>
+      
 
                                                                                               
       <li class="dropdown">
