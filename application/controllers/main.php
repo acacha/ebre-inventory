@@ -19,8 +19,10 @@ class Main extends CI_Controller {
         /* ------------------ */ 
         $this->load->library('grocery_CRUD');
 		$this->load->library('image_CRUD');  
-		$this->load->library('session');  
-		$this->load->library('ion_auth');
+		$this->load->library('session'); 
+
+		$params = array('model' => "inventory_ion_auth_model");
+		$this->load->library('ion_auth',$params);
 
 		//LOAD INVENTORY MODEL
 		$this->load->model('inventory_model');
@@ -396,7 +398,7 @@ class Main extends CI_Controller {
 		$readonly_group = $this->config->item('readonly_group');		
 		$organizationalunit_group = $this->config->item('organizationalunit_group');
 		$dataentry_group = $this->config->item('dataentry_group');
-		$admin_group = $this->config->item('admin_group');
+		$inventory_admin_group = $this->config->item('inventory_admin_group');
 		
 		//NOT ALL USERS HAVE PREFERENCES: IN CASE no preferences then
 		//default ones are applied
@@ -428,7 +430,7 @@ class Main extends CI_Controller {
 		//echo "state:" . $state;
 		
 		//SKIP IS USER IS ADMIN	
-		if (!$this->ion_auth->in_group($admin_group)) {
+		if (!$this->ion_auth->in_group($inventory_admin_group)) {
 			//CHECK OPERATIONS DONE BY NO ADMIN USERS DEPENDING ON STATE
 			if($state == 'add')	{
 				//Prepare add form to force userId
@@ -448,7 +450,7 @@ class Main extends CI_Controller {
 				//CHECK IF EDIT IS ALLOWED DEPENDING ON USER ROLES	
 				$primary_key = $state_info->primary_key;
 				
-				echo "<br/>primary_key:". $primary_key;
+				//echo "<br/>primary_key:". $primary_key;
 				$skip_grocerycrud=true;
 				$alternate_view_to_grocerycrud="insert_not_allowed.php";
 				
@@ -533,14 +535,14 @@ class Main extends CI_Controller {
 		$this->grocery_crud->callback_edit_field('last_update',array($this,'edit_callback_last_update'));
 		
 		//UPDATE AUTOMATIC FIELDS
-		if ($this->ion_auth->in_group($admin_group)) {
+		if ($this->ion_auth->in_group($inventory_admin_group)) {
 			$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
 		} else {
 			//If not admin user, force UserId always to be the userid of actual user
 			$this->grocery_crud->callback_before_insert(array($this,'before_insert_user_preference_callback'));
 		}
 		
-		if ($this->ion_auth->in_group($admin_group)) {
+		if ($this->ion_auth->in_group($inventory_admin_group)) {
 			$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
 		} else {
 			//If not admin user, force UserId always to be the userid of actual user
@@ -610,8 +612,8 @@ class Main extends CI_Controller {
 		
 		//CHECK IF USER IS ADMIN --> REDIRECT TO LIST ALL USER 
 		//PREFERENCES
-		$admin_group = $this->config->item('admin_group');
-		if ($this->ion_auth->in_group($admin_group)) {
+		$inventory_admin_group = $this->config->item('inventory_admin_group');
+		if ($this->ion_auth->in_group($inventory_admin_group)) {
 			//Manage all user preferences:
 			//$this->user_preferences();
 			redirect("main/user_preferences", 'refresh');
@@ -866,8 +868,7 @@ class Main extends CI_Controller {
     
     function _get_rolename_byId($id){
 		
-		$roles = (array) $this->config->item('roles');
-		
+		$roles = (array) $this->config->item('roles');		
 		return $roles[(int) $id];
 	}
     
@@ -1585,10 +1586,22 @@ public function users() {
 	    $this->current_table="users";
         $this->grocery_crud->set_table($this->current_table);  
         
-        $this->grocery_crud->fields('first_name','last_name','username','password','verify_password','mainOrganizationaUnitId','email','active','company','groups');
+        $this->grocery_crud->add_fields('first_name','last_name','username','password','verify_password','mainOrganizationaUnitId','email','active','company','phone','groups','created_on','ip_address');
+        $this->grocery_crud->edit_fields('first_name','last_name','username','password','verify_password','mainOrganizationaUnitId','email','active','company','phone','groups','last_login','ip_address');
         
-        $this->grocery_crud->required_fields('username','password','verify_password','email','active','groups');
-        
+
+        //CHECK IF STATE IS UPDATE o UPDATE_VALIDATION
+        $state = $this->grocery_crud->getState();
+        if ($state == "update" || $state == "update_validation" || $state == "edit") {
+			$this->grocery_crud->required_fields('username','email','active','groups');
+			$this->grocery_crud->set_rules('password', lang('password'), 'min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|md5');
+			$this->grocery_crud->set_rules('verify_password', lang('verify_password'), 'matches[password]');
+		} else {
+			$this->grocery_crud->required_fields('username','password','verify_password','email','active','groups');
+			$this->grocery_crud->set_rules('password', lang('password'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|md5');
+			$this->grocery_crud->set_rules('verify_password', lang('verify_password'), 'required|matches[password]');
+		}
+
         //Establish subject:
         $this->grocery_crud->set_subject(lang('users_subject'));
         
@@ -1619,27 +1632,42 @@ public function users() {
         //FIELD TYPES
         $this->grocery_crud->field_type('password', 'password');
         $this->grocery_crud->field_type('verify_password', 'password');
-        $this->grocery_crud->field_type('created_on', 'date_timestamp');
-		$this->grocery_crud->field_type('last_login', 'date_timestamp');
+        $this->grocery_crud->field_type('created_on', 'datetime');
+		$this->grocery_crud->field_type('last_login', 'datetime');
 		$this->grocery_crud->field_type('active', 'dropdown',
 		            array('1' => lang('Yes'), '2' => lang('No')));
+		$this->grocery_crud->field_type('ip_address', 'invisible');
+		$this->grocery_crud->field_type('created_on', 'invisible');
 		
 		//RULES
-		$this->grocery_crud->set_rules('verify_password', lang('verify_password'), 'required|matches[password]');
 		$this->grocery_crud->set_rules('email', lang('email'), 'required|valid_email');
         
         $this->grocery_crud->unset_add_fields('ip_address','salt','activation_code','forgotten_password_code','forgotten_password_time','remember_code','last_login','created_on');
         $this->grocery_crud->unset_edit_fields('ip_address','salt','activation_code','forgotten_password_code','forgotten_password_time','remember_code','last_login','created_on');
+        
+        $this->grocery_crud->unique_fields('username','email');
 
 	    //GROUPS
-        $this->grocery_crud->set_relation_n_n('groups', 'users_groups','groups', 'group_id', 'id', 'name');
+        $this->grocery_crud->set_relation_n_n('groups', 'users_groups','groups', 'user_id', 'group_id', 'name');
         
         //USER MAIN ORGANIZATIONAL UNIT
         $this->grocery_crud->set_relation('mainOrganizationaUnitId','organizational_unit','{name}',array('markedForDeletion' => 'n'));
         
-        $this->set_theme($this->grocery_crud);
+        $this->grocery_crud->callback_before_insert(array($this,'callback_unset_verification_and_hash_and_extra_actions'));
+		$this->grocery_crud->callback_before_update(array($this,'callback_unset_verification_and_hash_and_extra_actions'));
+		
+		//ON UPDATE SHOW VOID PASSWORD FIELDS
+		$this->grocery_crud->callback_edit_field('password',array($this,'edit_field_callback_password'));
+		
+		$this->set_theme($this->grocery_crud);
         
+        try {
+			
         $output = $this->grocery_crud->render();
+        
+        } catch(Exception $e){
+			show_error($e->getMessage().' --- '.$e->getTraceAsString());
+		}
         
         $this->load_header($output);
         
@@ -1648,6 +1676,35 @@ public function users() {
                
         $this->load->view('users_view.php',$output);
         $this->load->view('include/footer');
+}
+
+public function edit_field_callback_password($value, $primary_key)
+{
+    return '<input id="field-password" name="password" type="password" value="">';
+}
+
+public function callback_unset_verification_and_hash_and_extra_actions($post_array){
+		
+	unset($post_array['verify_password']);   
+	$password=$post_array['password'];
+	   
+	if(!empty($password)) {
+		$salt       = $this->ion_auth->store_salt ? $this->salt() : FALSE;
+		$post_array['password']  = $this->ion_auth->hash_password($password, $salt);
+		if ($this->ion_auth->store_salt)	{
+			$post_array['salt'] = $salt;
+		}
+	} else {
+		//DON'T SAVE VOID PASSWORD INSTEAD LET THE PASSWORD REMAIN the same
+		unset($post_array['password']);
+	}
+		
+	//EXTRA FIELDS:
+	//IP ADDRESS
+	$post_array['ip_address'] = $this->ion_auth->_prepare_ip($this->input->ip_address());
+	$post_array['created_on'] = date('Y-m-d H:i:s');
+
+	return $post_array;
 }
 
 public function groups(){

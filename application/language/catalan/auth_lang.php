@@ -1,19 +1,14 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
-* Name:  Auth Lang - English
+* Name:  Auth Lang - Catalan
 *
-* Author: Ben Edmunds
-* 		  ben.edmunds@gmail.com
-*         @benedmunds
+* Author: Sergi Tur Badenas
+* 		  sergitur@ebretic.com
+*         @acacha
 *
-* Author: Daniel Davis
-*         @ourmaninjapan
+* Created:  17/08/2013
 *
-* Location: http://github.com/benedmunds/ion_auth/
-*
-* Created:  03.09.2013
-*
-* Description:  English language file for Ion Auth example views
+* Description:  Catalan language file for Ion Auth example views
 *
 */
 
@@ -118,44 +113,46 @@ $lang['edit_group_validation_name_label']  = 'Group Name';
 $lang['edit_group_validation_desc_label']  = 'Description';
 
 // Change Password
-$lang['change_password_heading']                               = 'Change Password';
-$lang['change_password_old_password_label']                    = 'Old Password:';
-$lang['change_password_new_password_label']                    = 'New Password (at least %s characters long):';
-$lang['change_password_new_password_confirm_label']            = 'Confirm New Password:';
-$lang['change_password_submit_btn']                            = 'Change';
-$lang['change_password_validation_old_password_label']         = 'Old Password';
-$lang['change_password_validation_new_password_label']         = 'New Password';
-$lang['change_password_validation_new_password_confirm_label'] = 'Confirm New Password';
+$lang['change_password_heading']                               = 'Canviar la paraula de pas';
+$lang['change_password_old_password_label']                    = 'Paraula de pas antiga:';
+$lang['change_password_new_password_label']                    = 'Nova paraula de pas (com a mínim ha de tenir %s caràcters):';
+$lang['change_password_new_password_confirm_label']            = 'Confirmar la nova paraula de pas:';
+$lang['change_password_submit_btn']                            = 'Canviar';
+$lang['change_password_validation_old_password_label']         = 'Paraula de pas antiga';
+$lang['change_password_validation_new_password_label']         = 'Nova paraula de pas';
+$lang['change_password_validation_new_password_confirm_label'] = 'Confirmeu la nova paraula de pas';
 
 // Forgot Password
 $lang['forgot_password_heading']                 = 'Paraula de pas oblidada';
-$lang['forgot_password_subheading']              = "Si us plau ompliu el següent formulari per tal d'enviar-vos un correu electrònic amb la nova paraula de pas";
+$lang['forgot_password_subheading']              = "Si us plau ompliu el següent formulari per tal d'enviar-vos un correu electrònic amb la nova paraula de pas.";
 $lang['forgot_password_email_label']             = '%s';
 $lang['forgot_password_submit_btn']              = 'Enviar';
 $lang['forgot_password_validation_email_label']  = 'Adreça de correu electrònic';
+$lang['forgot_password_validation_username_label']  = "Nom d'usuari";
 $lang['forgot_password_username_identity_label'] = "Nom d'usuari";
 $lang['forgot_password_email_identity_label']    = 'Correu electrònic';
-$lang['forgot_password_email_not_found']    = 'El correu electrònic no pertany a cap usuari de la base de dades!';
-$lang['forgot_password_email_found_more_than_one'] = "Hi ha més d'un usuari amb aquest correu electrònic. Aviseu al administrador de la base de dades per corregir l'error";
-
+$lang['forgot_password_identity_not_found']    = 'El %s no pertany a cap usuari de la base de dades!';
+$lang['forgot_password_identity_found_more_than_one'] = "Hi ha més d'un usuari amb aquest %s. Aviseu al administrador de la base de dades per corregir l'error";
+$lang['do_you_not_remember_your_identity'] = "No recordeu el vostre %s";
+$lang['try_with_your_identity'] = "Proveu amb el %s";
 
 // Reset Password
-$lang['reset_password_heading']                               = 'Change Password';
-$lang['reset_password_new_password_label']                    = 'New Password (at least %s characters long):';
-$lang['reset_password_new_password_confirm_label']            = 'Confirm New Password:';
-$lang['reset_password_submit_btn']                            = 'Change';
-$lang['reset_password_validation_new_password_label']         = 'New Password';
-$lang['reset_password_validation_new_password_confirm_label'] = 'Confirm New Password';
+$lang['reset_password_heading']                               = 'Canviar la paraula de pas';
+$lang['reset_password_new_password_label']                    = 'Nova paraula de pas (com a mínim ha de tenir %s caràcters):';
+$lang['reset_password_new_password_confirm_label']            = 'Confirmar la nova paraula de pas:';
+$lang['reset_password_submit_btn']                            = 'Canviar';
+$lang['reset_password_validation_new_password_label']         = 'Nova paraula de pas';
+$lang['reset_password_validation_new_password_confirm_label'] = 'Confirmar la nova paraula de pas';
 
 // Activation Email
-$lang['email_activate_heading']    = 'Activate account for %s';
-$lang['email_activate_subheading'] = 'Please click this link to %s.';
-$lang['email_activate_link']       = 'Activate Your Account';
+$lang['email_activate_heading']    = 'Activar el compte de %s';
+$lang['email_activate_subheading'] = 'Si us plau feu clic al següent enllaç per tal de %s.';
+$lang['email_activate_link']       = 'Activeu el vostre compte';
 
 // Forgot Password Email
-$lang['email_forgot_password_heading']    = 'Reset Password for %s';
-$lang['email_forgot_password_subheading'] = 'Please click this link to %s.';
-$lang['email_forgot_password_link']       = 'Reset Your Password';
+$lang['email_forgot_password_heading']    = "Reestablir la paraula de pas per a l'usuariReset Password for %s";
+$lang['email_forgot_password_subheading'] = 'Si us plau feu clic al següent enllaç per %s.';
+$lang['email_forgot_password_link']       = 'reestablir la paraula de pas';
 
 // New Password Email
 $lang['email_new_password_heading']    = 'New Password for %s';

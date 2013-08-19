@@ -282,7 +282,7 @@ class Auth_Ldap {
 	public function get_additional_data($username) 	{
 		$filter = '('.$this->login_attribute.'='.$username.')';
         $search = ldap_search($this->ldapconn, $this->basedn, $filter, 
-                array('dn', 'givenname', 'sn','homephone'));
+                array('dn', 'givenname', 'sn','homephone','ou'));
         if(! $search ) {
             log_message('error', lang('error_searching_groups').ldap_error($this->ldapconn));
             show_error(lang('no_groups').ldap_error($this->ldapconn));
@@ -290,11 +290,25 @@ class Auth_Ldap {
         $results = ldap_get_entries($this->ldapconn, $search);		
 		
 		if($results['count'] === 1) {
-			if (array_key_exists('homephone', $results[0])) {
-				return array($results[0]['givenname'][0],$results[0]['sn'][0],"",$results[0]['homephone'][0]);
-			}	else {
-				return array($results[0]['givenname'][0],$results[0]['sn'][0],"","");
-			}
+			//CHECK WICH VALUES EXISTS
+			$first_name=null;
+			$last_name=null;
+			$phone=null;
+			$company=null;
+			if (array_key_exists('givenname', $results[0]))
+				$first_name=$results[0]['givenname'][0];
+			if (array_key_exists('sn', $results[0]))
+				$last_name=$results[0]['sn'][0];
+			if (array_key_exists('homephone', $results[0]))
+				$phone=$results[0]['homephone'][0];
+			if (array_key_exists('ou', $results[0]))
+				$company=$results[0]['ou'][0];
+			return array(
+					"first_name" => $first_name,
+					"last_name"  => $last_name,
+					"phone"      => $phone,
+					"company"      => $company
+					);
         }
         return false;
 	}
@@ -316,8 +330,10 @@ class Auth_Ldap {
         $results = ldap_get_entries($this->ldapconn, $search);		
 		
 		if($results['count'] === 1) {
-            return $results[0]['email'][0];
-        }
+			if (array_key_exists('email', $results[0])) {
+				return $results[0]['email'][0];
+			}
+		}
         return false;
 	}
 }

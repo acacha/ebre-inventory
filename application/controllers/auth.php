@@ -21,10 +21,13 @@ class Auth extends CI_Controller {
     public $edit_group_view = "auth/edit_group";
     
 
-	function __construct()
+	function __construct($model="ion_auth_model")
 	{
 		parent::__construct();
-		$this->load->library('ion_auth');
+		
+		$params = array('model' => $model);
+		$this->load->library('ion_auth',$params);
+		
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 
@@ -77,12 +80,18 @@ class Auth extends CI_Controller {
 		//validate form input
 		$this->form_validation->set_rules('identity', 'Identity', 'required');
 		$this->form_validation->set_rules('password', 'Password', 'required');
+		
+		//GET REALM
+		$realm=$this->input->post('realm');
 
 		if ($this->form_validation->run() == true)
 		{
 			//check to see if the user is logging in
 			//check for "remember me"
 			$remember = (bool) $this->input->post('remember');
+			
+			$realm = $this->input->post('realm');
+			
 			if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
 			{
 				//if the login is successful
@@ -198,52 +207,40 @@ class Auth extends CI_Controller {
 			}
 		}
 	}
-
-	//forgot password
-	function forgot_password()
-	{
-		$this->form_validation->set_rules('email', $this->lang->line('forgot_password_validation_email_label'), 'required|valid_email');
+	
+	protected function _forgot_password_by_identity($identity="email") {	
+		
+		$this->data['identity']="email";
+		$this->data['alternative_identity']="username";
+		
+		if ($identity == "username" ) {
+			$this->form_validation->set_rules('username', $this->lang->line('forgot_password_validation_username_label'), 'required');		
+			$this->data['identity']="username";
+			$this->data['alternative_identity']="email";	
+		}
+		else {
+			$this->form_validation->set_rules('email', $this->lang->line('forgot_password_validation_email_label'), 'required|valid_email');
+		}
+			
 		if ($this->form_validation->run() == false)
 		{
-			//setup the input
-			$this->data['email'] = array('name' => 'email',
-				'id' => 'email',
-			);
-
-			if ( $this->config->item('identity', 'ion_auth') == 'username' ){
-				$this->data['identity_label'] = $this->lang->line('forgot_password_username_identity_label');
-			}
-			else
-			{
-				$this->data['identity_label'] = $this->lang->line('forgot_password_email_identity_label');
-			}
-
 			//set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-			$this->_render_page($this->forgot_password_view, $this->data);
+			$this->_render_page($this->forgot_password_view , $this->data);
 		}
 		else
 		{
-			// get identity for that email
+		    
+		    //IF IDENTITY (USERNAME OR EMAIL) is not in database come 
+		    //back to forgot_password form with error message
+			$this->check_identity($identity);
+			
 			$config_tables = $this->config->item('tables', 'ion_auth');
-			$query = $this->db->where('email', $this->input->post('email'));
-			
-			$num = $this->db->count_all_results($config_tables['users']);
-			
-			if ( $num <= 0) {
-				$this->session->set_flashdata('message', lang("forgot_password_email_not_found"));
-				redirect($this->forgot_password_page, 'refresh');
-			}
-			
-			if ( $num > 1) {
-				$this->session->set_flashdata('message', lang("forgot_password_email_found_more_than_one"));
-				redirect($this->forgot_password_page, 'refresh');
-			}
-			
-			$identity = $this->db->limit('1')->get($config_tables['users'])->row();
-					
+			$this->db->where($identity, $this->input->post($identity));
+			$identity_row = $this->db->limit('1')->get($config_tables['users'])->row();
+		
 			//run the forgotten password method to email an activation code to the user
-			$forgotten = $this->ion_auth->forgotten_password($identity->{$this->config->item('identity', 'ion_auth')});
+			$forgotten = $this->ion_auth->forgotten_password($identity_row->{$identity},$identity);
 	
 			if ($forgotten)
 			{
@@ -253,16 +250,56 @@ class Auth extends CI_Controller {
 			}
 			else
 			{
-				echo "ERROR";
-				//$this->session->set_flashdata('message', $this->ion_auth->errors());
-				//redirect($this->forgot_password_page, 'refresh');
+				$this->session->set_flashdata('message', $this->ion_auth->errors());
+				redirect($this->forgot_password_page. "_" . $identity, 'refresh');
 			}
+		}
+	}
+	
+	public function forgot_password_email()
+	{
+		$this->_forgot_password_by_identity();
+	}
+
+	public function forgot_password_username()
+	{
+		$this->_forgot_password_by_identity("username");
+	}
+	
+	//forgot password
+	function forgot_password()
+	{
+		//DEFAULT: forgot_password_email();
+		$this->forgot_password_email();
+	}
+	
+	public function check_identity($identity="email") {
+		
+		// get identity
+		$config_tables = $this->config->item('tables', 'ion_auth');
+		$query = $this->db->where($identity, $this->input->post($identity));
+			
+		$num = $this->db->count_all_results($config_tables['users']);
+			
+		if ( $num <= 0) {
+			$this->session->set_flashdata('message', sprintf(lang("forgot_password_identity_not_found"),$identity));
+			redirect($this->forgot_password_page . "_" . $identity, 'refresh');
+		}
+			
+		if ( $num > 1) {
+			$this->session->set_flashdata('message', sprintf(lang("forgot_password_identity_found_more_than_one"),$identity));
+			redirect($this->forgot_password_page . "_" . $identity, 'refresh');
 		}
 	}
 
 	//reset password - final step for forgotten password
 	public function reset_password($code = NULL)
 	{
+		$this->lang->load('inventory', 'catalan');	       
+		$this->ion_auth->lang->load('ion_auth', 'catalan');
+		$this->lang->load('auth', 'catalan');
+		$this->lang->load('form_validation', 'catalan');
+		
 		if (!$code)
 		{
 			show_404();
@@ -285,25 +322,12 @@ class Auth extends CI_Controller {
 				$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
 				$this->data['min_password_length'] = $this->config->item('min_password_length', 'ion_auth');
-				$this->data['new_password'] = array(
-					'name' => 'new',
-					'id'   => 'new',
-				'type' => 'password',
-					'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-				);
-				$this->data['new_password_confirm'] = array(
-					'name' => 'new_confirm',
-					'id'   => 'new_confirm',
-					'type' => 'password',
-					'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-				);
-				$this->data['user_id'] = array(
-					'name'  => 'user_id',
-					'id'    => 'user_id',
-					'type'  => 'hidden',
-					'value' => $user->id,
-				);
-				$this->data['csrf'] = $this->_get_csrf_nonce();
+				
+				$this->data['user_id']= $user->id;
+				
+				$csrf= $this->_get_csrf_nonce();
+				
+				$this->data['csrf'] = $csrf;
 				$this->data['code'] = $code;
 
 				//render

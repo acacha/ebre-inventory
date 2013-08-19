@@ -55,7 +55,7 @@ class Ion_auth
 	 * @return void
 	 * @author Ben
 	 **/
-	public function __construct()
+	public function __construct($params)
 	{
 		$this->load->config('ion_auth', TRUE);
 		$this->load->library('email');
@@ -74,17 +74,11 @@ class Ion_auth
 
 		// Load IonAuth MongoDB model if it's set to use MongoDB,
 		// We assign the model object to "ion_auth_model" variable.
-		/*
 		$this->config->item('use_mongodb', 'ion_auth') ?
 			$this->load->model('ion_auth_mongodb_model', 'ion_auth_model') :
-			$this->load->model('ion_auth_model');
-		*/	
-		// Load IonAuth Ldap model if it's set to use Ldap,
-		// We assign the model object to "ion_auth_model" variable.
-		$this->config->item('use_ldap', 'ion_auth') ?
-			$this->load->model('ion_auth_ldap_model', 'ion_auth_model') :
-			$this->load->model('ion_auth_model');	
-
+			$this->load->model($params['model'],'ion_auth_model');
+		
+		
 		$this->_cache_user_in_group =& $this->ion_auth_model->_cache_user_in_group;
 
 		//auto-login the user if they are remembered
@@ -142,15 +136,17 @@ class Ion_auth
 	 * @return mixed  boolian / array
 	 * @author Mathew
 	 **/
-	public function forgotten_password($identity)    //changed $email to $identity
+	public function forgotten_password($identity,$identity_key="email")    //changed $email to $identity
 	{
+		$this->ion_auth_model->identity_column=$identity_key;
 		if ( $this->ion_auth_model->forgotten_password($identity) )   //changed
 		{
 			// Get user information
-			$user = $this->where($this->config->item('identity', 'ion_auth'), $identity)->users()->row();  //changed to get_user_by_identity from email
+			$user = $this->where($identity_key, $identity)->users()->row();  //changed to get_user_by_identity from email
 
 			if ($user)
 			{
+				
 				$data = array(
 					'identity'		=> $user->{$this->config->item('identity', 'ion_auth')},
 					'forgotten_password_code' => $user->forgotten_password_code
@@ -163,7 +159,10 @@ class Ion_auth
 				}
 				else
 				{
+		
+					$data['organization'] = $this->config->item('organization', 'ion_auth');	
 					$message = $this->load->view($this->config->item('email_templates', 'ion_auth').$this->config->item('email_forgot_password', 'ion_auth'), $data, true);
+					
 					$this->email->clear();
 					$this->email->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'));
 					$this->email->to($user->email);
@@ -180,8 +179,8 @@ class Ion_auth
 					else
 					{
 						$this->set_error('forgot_password_unsuccessful');
-						echo "EMAIL NOT SEND!<br/>";
-						echo $this->email->print_debugger();
+						//echo "EMAIL NOT SEND!<br/>";
+						//echo $this->email->print_debugger();
 						return FALSE;
 					}
 				}

@@ -30,8 +30,8 @@ class Inventory_auth extends Auth {
     public $realms = "mysql,ldap";
     
     function __construct() {
-		
-		parent::__construct();
+		$model="inventory_ion_auth_model";
+		parent::__construct($model);
 		
 		$this->config->load('inventory');	
 		
@@ -46,33 +46,44 @@ class Inventory_auth extends Auth {
         $this->login_page="inventory_auth/login";
         $this->after_succesful_login_page="main";
         $this->forgot_password_page ="inventory_auth/forgot_password";
+        $this->reset_password_page ="inventory_auth/reset_password";
+        $this->users_list_page = "main/users";
+        $this->user_edit_page = "main/users/edit";
+        $this->user_add_page = "main/users/add";
+        $this->user_delete_page = "main/users/delete";
+		$this->groups_list_page = "main/groups";
+        $this->group_edit_page = "main/groups/edit";
+        $this->group_add_page = "main/groups/add";
+        $this->group_delete_page = "main/groups/delete";
         
-        /*
-    public $auth_page = "inventory_auth";
-	public $login_page = "inventory_auth/login";
-	public $login_view = "inventory_auth/login";
-	public $login_index_view = "inventory_auth/index";
-    public $after_succesful_login_page = "/";
-    public $change_password_page ="inventory_auth/change_password";
-    public $change_password_view ="inventory_auth/change_password";
-    public $forgot_password_page ="inventory_auth/forgot_password";
-    
-    public $reset_password_page ="inventory_auth/reset_password/";
-    public $reset_password_view ="inventory_auth/reset_password";
-    public $deactive_user_view ="inventory_auth/deactivate_user";
-    
-    public $create_user_view ="inventory_auth/create_user";    
-    public $edit_user_view = "inventory_auth/edit_user";
-    public $create_group_view ="inventory_auth/create_group";    
-    public $edit_group_view = "inventory_auth/edit_group";
-*/
-        
+        //GET REALMS FROM CONFIG
         if ($this->config->item('realms')!="") {
 			$this->realms = explode(",",$this->config->item('realms'));
 		}
         
 	}
+	
 
+	
+public function reset_password($code = NULL) {
+	$this->session->set_userdata('institution_name', $this->config->item('institution_name'));
+	parent::reset_password($code);
+}
+
+function forgot_password()	{
+	$this->session->set_userdata('institution_name', $this->config->item('institution_name'));
+	parent::forgot_password();
+}
+
+function forgot_password_username()	{
+	$this->session->set_userdata('institution_name', $this->config->item('institution_name'));
+	parent::forgot_password_username();
+}
+
+function forgot_password_email()	{
+	$this->session->set_userdata('institution_name', $this->config->item('institution_name'));
+	parent::forgot_password_email();
+}
 
 function login()  {
     
@@ -136,9 +147,11 @@ function login()  {
 			
 			break;
 		case "mysql":
+			$this->ion_auth->ion_auth_model->setRealm("mysql");
 			parent::login();
 			break;
 		case "ldap":
+			$this->ion_auth->ion_auth_model->setRealm("ldap");
 			parent::login();
 			break;
 		}
@@ -147,7 +160,47 @@ function login()  {
 	}
 }
 
-function logout()  {
+//redirect if needed, otherwise display the user list
+/*function index()
+	{
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect($this->login_page, 'refresh');
+		}
+		elseif (!$this->ion_auth->is_admin())
+		{
+			//redirect them to the home page because they must be an administrator to view this
+			redirect($this->after_succesful_login_page, 'refresh');
+		}
+		else
+		{
+			redirect($this->users_list_page, 'refresh');
+		}
+	}
+	*/
+
+public function change_password() {
+	parent::change_password();
+}	
+	
+public function create_user()	{
+	redirect($this->user_add_page, 'refresh');
+}	
+
+public function create_group() {
+	redirect($this->group_add_page, 'refresh');
+}
+
+public function edit_user($id)	{
+	redirect($this->group_add_page."/".$id, 'refresh');
+}
+
+public function edit_group($id)	{	
+	redirect($this->group_edit_page."/".$id, 'refresh');
+}
+
+public function logout()  {
     $this->data['title'] = "Logout";
 
 	//log the user out
@@ -158,10 +211,4 @@ function logout()  {
 	redirect($this->login_page, 'refresh');
 }
 
-/*
- * function forgot_password()
-	{
-		echo "1";
-	}
-	*/
 }

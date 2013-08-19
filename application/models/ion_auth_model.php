@@ -696,7 +696,7 @@ class Ion_auth_model extends CI_Model
 		    'forgotten_password_code' => $key,
 		    'forgotten_password_time' => time()
 		);
-
+		
 		$this->db->update($this->tables['users'], $update, array($this->identity_column => $identity));
 
 		$return = $this->db->affected_rows() == 1;
@@ -808,8 +808,8 @@ class Ion_auth_model extends CI_Model
 		    'password'   => $password,
 		    'email'      => $email,
 		    'ip_address' => $ip_address,
-		    'created_on' => time(),
-		    'last_login' => time(),
+		    'created_on' => date('Y-m-d H:i:s'),
+		    'last_login' => date('Y-m-d H:i:s'),
 		    'active'     => ($manual_activation === false ? 1 : 0)
 		);
 
@@ -823,7 +823,7 @@ class Ion_auth_model extends CI_Model
 		$user_data = array_merge($this->_filter_data($this->tables['users'], $additional_data), $data);
 
 		$this->trigger_events('extra_set');
-
+		
 		$this->db->insert($this->tables['users'], $user_data);
 
 		$id = $this->db->insert_id();
@@ -837,12 +837,16 @@ class Ion_auth_model extends CI_Model
 			}
 		}
 		
-		$default_group = $this->where('name', $this->config->item('default_group', 'ion_auth'))->group()->row();
-
-		if ((isset($default_group->id) && !isset($groups)) || (empty($groups) && !in_array($default_group->id, $groups)))
-		{
-			$this->add_to_group($default_group->id, $id);
+		//Change made by Sergi Tur: firt check if default group exists in database before using it
+		$default_group_query = $this->where('name', $this->config->item('default_group', 'ion_auth'))->group();
+		if ($default_group_query->num_rows() > 0)	{
+			$default_group = $default_group_query->row();
+			if ((isset($default_group->id) && !isset($groups)) || (empty($groups) && !in_array($default_group->id, $groups)))
+				{
+				$this->add_to_group($default_group->id, $id);
+				}
 		}
+		
 		$this->trigger_events('post_register');
 
 		return (isset($id)) ? $id : FALSE;
@@ -887,7 +891,6 @@ class Ion_auth_model extends CI_Model
 			$user = $query->row();
 
 			$password = $this->hash_password_db($user->id, $password);
-
 			if ($password === TRUE)
 			{
 				if ($user->active == 0)
@@ -911,7 +914,6 @@ class Ion_auth_model extends CI_Model
 
 				$this->trigger_events(array('post_login', 'post_login_successful'));
 				$this->set_message('login_successful');
-
 				return TRUE;
 			}
 		}
@@ -1545,7 +1547,7 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('extra_where');
 
-		$this->db->update($this->tables['users'], array('last_login' => time()), array('id' => $id));
+		$this->db->update($this->tables['users'], array('last_login' => date('Y-m-d H:i:s')), array('id' => $id));
 
 		return $this->db->affected_rows() == 1;
 	}
@@ -2060,7 +2062,7 @@ class Ion_auth_model extends CI_Model
 		return $filtered_data;
 	}
 
-	protected function _prepare_ip($ip_address) {
+	public function _prepare_ip($ip_address) {
 		if ($this->db->platform() === 'postgre' || $this->db->platform() === 'sqlsrv' || $this->db->platform() === 'mssql')
 		{
 			return $ip_address;

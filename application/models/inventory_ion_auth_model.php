@@ -35,8 +35,17 @@
 
 include "ion_auth_model.php";
  
-class Ion_auth_ldap_model extends Ion_auth_model {
+class Inventory_ion_auth_model extends Ion_auth_model {
 
+	protected $realm = "mysql";
+	
+	public function getRealm() {
+        return $this->realm;
+    }
+
+    public function setRealm($realm) {
+        $this->realm= $realm;
+    }
 	
 	/**
 	 * IonAuth Ldap Model Constructor
@@ -51,13 +60,69 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 		//DATABASE MODEL
 		$this->load->model('inventory_Model');
 	}
+	
+	public function login($identity, $password, $remember = FALSE)
+	{
+		//GET REALM
+		switch ($this->realm) {
+			case "mysql":
+				return $this->login_mysql($identity, $password, $remember);
+				break;
+			case "ldap":
+				return $this->login_ldap($identity, $password, $remember);
+				break;
+			default:
+				return $this->login_mysql($identity, $password, $remember);
+				break;
+		}
+		
+	}
+	
+	public function login_mysql($identity, $password, $remember = FALSE)
+	{
+		$result = parent::login($identity, $password, $remember);
+		
+		//SI EL LOGIN ÉS CORRECTE
+		if ($result) {
+			//GET ROLE AND SET TO SESSION
+			//get roles
+			$roles = $this->config->item('roles');
+			
+			//get groups of current user
+			$usergroups = $this->get_users_groups()->result();
+			
+			$roleid=null;
+			foreach ($usergroups as $usergroup) {
+				$roleid = array_search($usergroup->name, $roles);
+				if($roleid !== FALSE) {
+					break;
+				}
+			}
+			if ($roleid!=null) {
+				$this->session->set_userdata('role',$roleid);
+			} else {
+				//ERROR: users doesn't have any valid role
+				$this->set_error('login_unsuccessful_not_allowed_role');	
+				return FALSE;
+			}
+			
+			//SESSION INITIALIZE AFTER CORRECT LOGIN
+			//GET CURRENT ROLE INFO				
+			$current_rol_id = $this->session->userdata('role');
+			$current_role_name=$this->_get_rolename_byId($current_rol_id);
+			
+			$this->post_login_session_initialitze($current_role_name);
+		}
+		
+		return $result;
+	}
 
 	/**
 	 * Checks credentials and logs the passed user in if possible.
 	 *
 	 * @return bool
 	 */
-	public function login($identity, $password, $remember = FALSE)
+	public function login_ldap($identity, $password, $remember = FALSE)
 	{
 		$this->trigger_events('pre_login');
 		
@@ -66,6 +131,10 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 			$this->set_error('login_unsuccessful');
 			return FALSE;
 		}
+		
+		//IN MYSQL HERE: $this->trigger_events('extra_where');
+		//TODO: COULD WE DO SOMETHING SIMILAR IN LDAP?
+		
 		$return_value=$this->auth_ldap->login($identity, $password);
 		
 		switch ($return_value) {
@@ -105,7 +174,6 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 		$id;
 		$last_login;
 		$username=$identity;
-		$last_login;
 		$user = new stdClass;
 		
 		// ADD USER TO users table if not exists
@@ -145,33 +213,9 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 			$this->remember_user($user->id);
 		}
 		
-		//SET DEFAULT LANGUAGE
-		if (!$this->session->userdata("current_language")) {
-			$this->session->set_userdata("current_language",
-										  $this->config->item('default_language'));
-		}
-		
 		//GET CURRENT ROLE INFO
 		$current_rol_id = $this->session->userdata('role');
 		$current_role_name=$this->_get_rolename_byId($current_rol_id);
-		
-		
-		//SET DEFAULT CURRENT ORGANIZATIONAL UNIT
-		$current_organizational_unit="all";
-		
-		//CHECK USER ROLE: IF 
-		//$config['organizationalunit_group'] = "inventory_organizationalunit";
-		$organizationalunit_group=$this->config->item('organizationalunit_group');
-		
-		if ( $current_role_name == $organizationalunit_group) {
-			//OBTAIN current_organizational_unit from database
-			$current_organizational_unit=$this->inventory_Model->get_main_organizational_unit_from_userid($user->id);
-		}
-		
-		if (!$this->session->userdata("current_organizational_unit")) {
-			$this->session->set_userdata("current_organizational_unit",
-										  $current_organizational_unit);
-		}
 		
 		//SET CORRECT LDAP GRUPS IN DATABASE		
 		
@@ -202,9 +246,34 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 		//REMOVE USER FROM OTHER LDAP GROUPS:
 		$this->remove_from_group($ldap_roles_database_keys, $user->id);
 		
+		$this->post_login_session_initialitze($current_role_name);
+		return TRUE;
+	}
+	
+	function post_login_session_initialitze($current_role_name) {
+		//SET DEFAULT LANGUAGE
+		if (!$this->session->userdata("current_language")) {
+			$this->session->set_userdata("current_language",
+										  $this->config->item('default_language'));
+		}		
+		
+		//SET DEFAULT CURRENT ORGANIZATIONAL UNIT
+		$current_organizational_unit="all";
+		
+		//CHECK USER ROLE: IF 
+		$organizationalunit_group=$this->config->item('organizationalunit_group');
+		
+		if ( $current_role_name == $organizationalunit_group) {
+			//OBTAIN current_organizational_unit from database
+			$current_organizational_unit=$this->inventory_Model->get_main_organizational_unit_from_userid($user->id);
+		}
+		
+		if (!$this->session->userdata("current_organizational_unit")) {
+			$this->session->set_userdata("current_organizational_unit",
+										  $current_organizational_unit);
+		}
 		
 		$this->_initialize_fields();
-		return TRUE;
 	}
 	
 	function _get_rolename_byId($id) {		
@@ -336,7 +405,6 @@ class Ion_auth_ldap_model extends Ion_auth_model {
 	}
 
 }
-// END Ion_auth_ldap_model Class
+// END Inventory_ion_auth_model Class
 
-/* End of file ion_auth_ldap_model.php */
-/* Location: ./application/modules/auth/models/ion_auth_ldap_model.php */
+/* End of file inventory_ion_auth_model.php */

@@ -63,16 +63,21 @@
 
  <center><div class="text-error"><div id="infoMessage"><?php echo $message;?></div></div>
  
- <?php echo form_open('inventory_auth/forgot_password', array('class' => 'form-signin', 'style' => 'max-width: 600px' )); ?>
+ <?php echo form_open('inventory_auth/forgot_password_'.$identity, array('class' => 'form-signin', 'style' => 'max-width: 600px' )); ?>
   <h3><?php echo lang('forgot_password_heading');?></h3>
-  <p><?php echo sprintf(lang('forgot_password_subheading'), $identity_label);?></p>
-
- 
+  <p><?php echo lang('forgot_password_subheading');?></p>
+      
       <p>
-        <input id="email" class="input-block-level" type="text" placeholder="<?php echo sprintf(lang('forgot_password_email_label'), $identity_label);?>" name="email">
+          <input id="<?php echo $identity;?>" name="<?php echo $identity;?>" class="input-block-level" type="text" placeholder="<?php $lang_string="forgot_password_" . $identity . "_identity_label" ;echo lang($lang_string);?>">
       </p>
 
       <p><button class="btn btn-large btn-primary" type="submit"><?php echo lang('forgot_password_submit_btn');?></button></p>
+      
+      <?php echo sprintf(lang("do_you_not_remember_your_identity"),strtolower(lang($identity)));?> 
+      <br/>
+	  <a href="<?php echo base_url('index.php/inventory_auth/forgot_password_' . $alternative_identity)?>">
+		   <?php echo sprintf(lang("try_with_your_identity"),strtolower(lang($alternative_identity)));?>
+       </a>
              
  <?php echo form_close();?>
  

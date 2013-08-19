@@ -40,7 +40,9 @@ $lang['activation_email_unsuccessful']			= 'No ha estat possible enviar l&#39;em
 // Login / Logout
 $lang['login_successful']						= 'Sessió iniciada amb èxit';
 $lang['login_unsuccessful']						= 'No ha estat possible iniciar sessió';
+$lang['login_unsuccessful_not_active'] 		    = 'El compte no està activat';
 $lang['logout_successful']						= 'Sessió finalitzada amb èxit';
+$lang['login_timeout']                          = 'Compte temporalment bloquejat. Proveu més tard';
 
 // Account Changes
 $lang['update_successful']						= 'Informació del compte actualitzat amb èxit';

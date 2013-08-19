@@ -20,7 +20,8 @@ $config['use_mongodb'] = FALSE;
 | If set to TRUE, Ion Auth will use Ldap as its database backend.
 |
 */
-$config['use_ldap'] = TRUE;
+//OBSOLETE: USE REALMS DROPDOWN IN LOGIN FORM 
+//$config['use_ldap'] = TRUE;
 
 /*
 | -------------------------------------------------------------------------
@@ -90,10 +91,11 @@ $config['max_rounds']     = 9;
  | The controller should check this function and act
  | appropriately. If this variable set to 0, there is no maximum.
  */
-$config['site_title']                 = "Example.com";       // Site Title, example.com
-$config['admin_email']                = "mainfo@ebretic.com"; // Admin Email, admin@example.com
-$config['default_group']              = 'members';           // Default group, use name
-$config['admin_group']                = 'admin';             // Default administrators group, use name
+$config['site_title']                 = "ebretic.com - ebreinventory";       // Site Title, example.com
+$config['organization']               = "Ebretic Enginyeria SL";       // Organization name, EBRETIC ENGINYERIA SL
+$config['admin_email']                = "localhost"; // Admin Email, admin@example.com
+$config['default_group']              = 'inventory_readonly';           // Default group, use name
+$config['admin_group']                = 'inventory_admin';             // Default administrators group, use name
 $config['identity']                   = 'username';             // A database column which is used to login with
 $config['min_password_length']        = 8;                   // Minimum Required Length of Password
 $config['max_password_length']        = 20;                  // Maximum Allowed Length of Password
@@ -119,11 +121,8 @@ $config['forgot_password_expiration'] = 0;                   // The number of mi
 $config['use_ci_email'] = TRUE; // Send Email using the builtin CI email class, if false it will return the code and the identity
 $config['email_config'] = array(
 	'mailtype'  => 'html',
-	'protocol'  => 'smtp',
-    'smtp_host' => 'ssl://smtp.googlemail.com',
-    'smtp_port' => 465,
-    'smtp_user' => 'GMAIL_USER',
-    'smtp_pass' => 'GMAIL_PASSWORD',
+	'protocol'  => 'sendmail',
+	'mailpath'  => '/usr/sbin/sendmail',
     'charset'   => 'utf-8',
     'newline'   => "\r\n"
 );
