@@ -17,7 +17,10 @@ class Main extends CI_Controller {
         $this->load->helper('url');
 
         /* ------------------ */ 
+        
+        $this->load->add_package_path(APPPATH.'third_party/grocery-crud/application/');
         $this->load->library('grocery_CRUD');
+        $this->load->add_package_path(APPPATH.'third_party/image-crud/application/');
 		$this->load->library('image_CRUD');  
 		$this->load->library('session'); 
 
