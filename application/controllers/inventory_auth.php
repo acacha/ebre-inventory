@@ -161,7 +161,7 @@ function login()  {
 }
 
 //redirect if needed, otherwise display the user list
-/*function index()
+function index()
 	{
 		if (!$this->ion_auth->logged_in())
 		{
@@ -178,7 +178,7 @@ function login()  {
 			redirect($this->users_list_page, 'refresh');
 		}
 	}
-	*/
+	
 
 public function change_password() {
 	parent::change_password();
