@@ -13,19 +13,40 @@ class Inventory_errors extends CI_Controller {
         $this->load->helper('url');
    		$this->load->library('session');  
 
+		$params = array('model' => "inventory_ion_auth_model");
+		$this->load->library('ion_auth',$params);
 		
         //Localization:
         $this->lang->load('inventory', 'catalan');	       
         $this->load->helper('language');
  
     }
+    
+    function _get_rolename_byId($id){
+
+		$roles = (array) $this->config->item('roles');		
+		return $roles[(int) $id];
+	}
 	
 	public function load_header($not_show_header = true){
 
              
         $data['not_show_header2']=$not_show_header;
+        
+        $data['current_role_id']   = $this->session->userdata('role');
+        
+        $show_maintenace_menu=true;
+        
+        if ($data['current_role_id'] == "") {
+			$show_maintenace_menu=false;
+		} else { 
+			$data['current_role_name'] = $this->_get_rolename_byId($data['current_role_id']);
+			if ($data['current_role_name'] == $this->config->item('organizationalunit_group') )
+				$show_maintenace_menu=false;
+		}
+        
+        $data['show_maintenace_menu'] =$show_maintenace_menu;
 
-    
         $data['inventory_js_files'] = array(
             '/javascript/jquery/jquery.min.js',
             base_url('assets/js/bootstrap.min.js')
@@ -49,6 +70,11 @@ class Inventory_errors extends CI_Controller {
 	
 	
 	function error404()	{
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect($this->login_page, 'refresh');
+		}
 		$this->load_header();
         $this->load->view('404.php');        
         $this->load->view('include/footer');   	
