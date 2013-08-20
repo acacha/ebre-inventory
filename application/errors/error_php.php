@@ -1,3 +1,8 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+ </head>
+ 
 <div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
 
 <h4>S'ha trobat un error de PHP</h4>
@@ -8,3 +13,4 @@
 <p>Número de línia: <?php echo $line; ?></p>
 
 </div>
+</html>
