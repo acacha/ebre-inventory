@@ -14,3 +14,4 @@ application/logs/*
 
 application/third_party/grocery-crud/
 application/third_party/image-crud/
+application/third_party/CodeIgniter-PHP-QR-Code/

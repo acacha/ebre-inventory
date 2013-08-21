@@ -1,6 +1,68 @@
 <script>
+	
+var ei_fnOpenEditForm = function(this_element){
+
+	var href_url = this_element.attr("href");
+
+	var dialog_height = $(window).height() - 80;
+
+	//Close all
+	$(".ui-dialog-content").dialog("close");
+
+	$.ajax({
+		url: href_url,
+		data: {
+			is_ajax: 'true'
+		},
+		type: 'post',
+		dataType: 'json',
+		beforeSend: function() {
+			this_element.closest('.flexigrid').addClass('loading-opacity');
+		},
+		complete: function(){
+			this_element.closest('.flexigrid').removeClass('loading-opacity');
+		},
+		success: function (data) {
+			if (typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances !== 'undefined') {
+					$.each(CKEDITOR.instances,function(index){
+						delete CKEDITOR.instances[index];
+					});
+			}
+
+		//	LazyLoad.loadOnce(data.js_lib_files);
+			//LazyLoad.load(data.js_config_files);
+
+			//$.each(data.css_files,function(index,css_file){
+			//	load_css_file(css_file);
+			//});
+
+			$("<div/>").html(data.output).dialog({
+				width: 910,
+				modal: true,
+				height: dialog_height,
+				close: function(){
+					$(this).remove();
+				},
+				open: function(){
+					var this_dialog = $(this);
+
+					$('#cancel-button').click(function(){
+						this_dialog.dialog("close");
+					});
+
+				}
+			});
+		}
+	});
+};
 
 $(document).ready(function(){
+	
+$('.qr_button').unbind('click');
+$('.qr_button').click(function(){
+	ei_fnOpenEditForm($(this));
+	return false;
+});
  
 //CHECK IF WE SET READ ONLY URL HASH (#readonly)
  if(window.location.hash.indexOf('readonly') != -1){
@@ -214,7 +276,6 @@ $(document).ready(function(){
  
 
   //$('#field-manualEntryDate').datetimepicker('setTime','16:55');
-
 });
 
 

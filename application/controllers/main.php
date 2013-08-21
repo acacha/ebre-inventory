@@ -43,6 +43,11 @@ class Main extends CI_Controller {
         $this->load->helper('language');
     }
     
+    protected function _is_ajax()
+	{
+		return array_key_exists('is_ajax', $_POST) && $_POST['is_ajax'] == 'true' ? true: false;
+	}
+    
 	public function signin(){
 		$this->load->view('signin');
 	}
@@ -658,7 +663,7 @@ class Main extends CI_Controller {
 		
 		//ESPECIFIC CUSTOM ACTIONS
         $this->grocery_crud->add_action(lang('Images'),base_url('assets/img/images.png'), '/main/images');
-        $this->grocery_crud->add_action(lang('QRCode'),base_url('assets/img/qr_code.png'), '/qr/generate');
+        $this->grocery_crud->add_action(lang('QRCode'),base_url('assets/img/qr_code.png'), '/qr/generate',"qr_button");
 		
 		$this->grocery_crud->set_table('inventory_object');
 		

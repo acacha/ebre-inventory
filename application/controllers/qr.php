@@ -26,8 +26,18 @@ class Qr extends CI_Controller {
        $params['savename'] = FCPATH."/assets/uploads/qrcodes/test.png";
        $this->ciqrcode->generate($params);
        
-       echo '<img src="'.base_url().'/assets/uploads/qrcodes/test.png" />';       
+       if ( $this->_is_ajax()) {
+		   $output= '<img src="'.base_url().'/assets/uploads/qrcodes/test.png" />';
+		   echo json_encode(array ( "output" => $output));
+	   } else {
+			echo '<img src="'.base_url().'/assets/uploads/qrcodes/test.png" />';       
+	   }
     }
+    
+    protected function _is_ajax()
+	{
+		return array_key_exists('is_ajax', $_POST) && $_POST['is_ajax'] == 'true' ? true: false;
+	}
         
 }
  
