@@ -89,7 +89,7 @@ $('.selectpicker').selectpicker('refresh');
      <center><h1><?php echo lang('inventory') . ". " . $this->session->userdata('institution_name');?></h1></center>
      <br>
      
-       <?php echo form_open('inventory_auth/login', array('id' => 'loginform', 'class' => 'form-signin' )); ?>
+       <?php echo form_open('inventory_auth/login'.$redirect, array('id' => 'loginform', 'class' => 'form-signin' )); ?>
         
         <h3 class="form-signin-heading"><?php echo lang('login-form-greetings');?></h3>
 

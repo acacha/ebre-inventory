@@ -71,11 +71,25 @@ class Auth extends CI_Controller {
 			$this->_render_page($this->login_index_view, $this->data);
 		}
 	}
+	
+	public function _getvar($name){
+		if (isset($_GET[$name])) return $_GET[$name];
+		else if (isset($_POST[$name])) return $_POST[$name];
+		else return false;
+	}
 
 	//log the user in
 	function login()
 	{
 		$this->data['title'] = "Login";
+		$this->data['redirect'] = "";
+		
+		$redirect_value=$this->_getvar("redirect");
+		if ($redirect_value) {
+			//echo urldecode($redirect_value);
+			$this->after_succesful_login_page=urldecode($redirect_value);
+			$this->data['redirect'] = "?redirect=".urldecode($redirect_value);
+		}
 		
 		//validate form input
 		$this->form_validation->set_rules('identity', 'Identity', 'required');
