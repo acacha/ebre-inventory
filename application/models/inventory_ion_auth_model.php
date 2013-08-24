@@ -362,6 +362,10 @@ class Inventory_ion_auth_model extends Ion_auth_model {
 			$this->session->set_userdata("user_preferences_current_fields_to_show",
 									 $this->config->item('default_fields_table_user_preferences'));
 		}																																
+		if (!$this->session->userdata("barcode_current_fields_to_show")) {
+			$this->session->set_userdata("barcode_current_fields_to_show",
+									 $this->config->item('default_fields_table_barcode'));
+		}																																
 									 
 	}
 	

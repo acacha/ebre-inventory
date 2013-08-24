@@ -116,6 +116,7 @@
          <li><a href='<?php echo site_url('main/model')?>'><?php echo lang('model_menu');?></a></li>
          <li><a href='<?php echo site_url('main/provider')?>'><?php echo lang('provider_menu');?></a></li>    
          <li><a href='<?php echo site_url('main/money_source')?>'><?php echo lang('money_source_menu');?></a></li>              
+         <li><a href='<?php echo site_url('main/barcode')?>'><?php echo lang('barcode_menu');?></a></li>
        </ul>                                                                                                                                                                                                                                                                                                                                      
       </li>
       <?php endif; ?>

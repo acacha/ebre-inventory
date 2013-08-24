@@ -61,6 +61,7 @@ $lang['Id'] = 'Id';
 $lang['id'] = 'Id';
 $lang['userId'] = "Id usuari";
 $lang['theme'] = 'Tema';
+$lang['barcodeId'] = 'Tipus de codi de barres';
 
 
 $lang['code'] = 'Codi';
@@ -80,6 +81,7 @@ $lang['money_source_id_subject'] = 'origen dels diners';
 $lang['users_subject'] = 'usuari';
 $lang['groups_subject'] = 'grup';
 $lang['user_preferences_subject'] = "preferència usuari";
+$lang['barcode_subject'] = "codi de barres";
 
 //BUTTONS
 $lang['reset'] = 'Reset';
@@ -114,6 +116,7 @@ $lang['maintenances'] = 'Manteniments';
  $lang['material_menu'] = 'Tipus Material';
  $lang['provider_menu'] = 'Proveïdors';
  $lang['money_source_menu'] = 'Origen Diners';
+ $lang['barcode_menu'] = 'Codis de barres';
 
 $lang['reports'] = 'Informes';
  $lang['global_reports'] = 'Informes globals';
@@ -129,7 +132,7 @@ $lang['404_page_not_found'] = '404 Pàgina no trobada';
 $lang['404_page_not_found_message'] = "La pàgina que heu demanat no s'ha pogut trobar";
 $lang['table_not_found'] = 'Taula no trobada';
 $lang['table_not_found_message'] = "La taula no s'ha pogut trobar";
-
+$lang['InventoryObjectId_not_found']="No s'ha trobat el identificador del objecte a la base de dades";
  
 //OPTIONS
 $lang['Good'] = 'Bo';
@@ -225,3 +228,7 @@ $lang['insert_not_allowed']="L'inserció d'aquest registre no li està permesa a
 
 $lang['verify_password']="Verificar paraula de pas";
 $lang['MainOrganizationaUnitId']="Unitat organitzativa";
+
+//QR
+$lang['id_is_needed_to_generate_qr_codes']="Cal indicar un identificador per generar els codis de barres i codis QR";
+$lang['inventory_object_url']="URL del objecte";
