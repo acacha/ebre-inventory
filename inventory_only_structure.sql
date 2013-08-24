@@ -366,6 +366,8 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
   PRIMARY KEY (`user_preferencesId`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+
+
 -- --------------------------------------------------------
 
 --
@@ -381,3 +383,23 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
   PRIMARY KEY (`session_id`),
   KEY `last_activity_idx` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de la taula `barcode`
+--
+
+CREATE TABLE IF NOT EXISTS `barcode` (
+  `barcodeId` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) NOT NULL,
+  `shortName` varchar(150) NOT NULL,
+  `description` text,
+  `entryDate` datetime NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `creationUserId` int(11) DEFAULT NULL,
+  `lastupdateUserId` int(11) DEFAULT NULL,
+  `markedForDeletion` enum('n','y') NOT NULL,
+  `markedForDeletionDate` datetime NOT NULL,
+  PRIMARY KEY (`barcodeId`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
