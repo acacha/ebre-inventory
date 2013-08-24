@@ -76,9 +76,30 @@ class inventory_Model  extends CI_Model  {
 			return "";
 
 	}
+
+	function get_externalIdInfoByInventoryObjectId($inventory_objectid)	{
+		$this->db->select('externalID,externalIDType');
+		$this->db->where('inventory_objectId',$inventory_objectid);
+		$query = $this->db->get('inventory_object');
+		if ($query->num_rows() > 0)
+			return array ("externalID" => $query->row()->externalID,
+						  "externalIDType" => $query->row()->externalIDType);
+		else
+			return false;
+	}
 	
-	
-	
-	
+	function get_barcodetype_byExternalIDTypeID($externalIDTypeID)	{
+		//Shortname is barcodetype (php-barcode format)
+		$this->db->select('barcode.shortname');
+		$this->db->from('externalIDType');
+		$this->db->join('barcode', 'barcode.barcodeId = externalIDType.barcodeId','inner');
+		$this->db->where('externalIDTypeID',$externalIDTypeID);
+		$query = $this->db->get();
+
+		if ($query->num_rows() > 0)
+			return $query->row()->shortname;
+		else
+			return false;
+	}
 	
 }
