@@ -115,6 +115,12 @@ $('.qr_button').click(function(){
    }
  } 
  
+ //Add URL to express add External Id Type
+ //externalIDType_input_box
+ $("#externalIDType_input_box").after("&nbsp; <a href=\"<?php echo base_url('index.php/main/externalIDType/add');?>\">Afegir</a>");
+
+ 
+ 
  //field-mainOrganizationaUnitId
  if (document.getElementById('field-mainOrganizationaUnitId') != null) {
   var mainOrganizationaUnitId = document.getElementById('field-mainOrganizationaUnitId');

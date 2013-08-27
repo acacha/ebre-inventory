@@ -9,7 +9,7 @@
 | 
 | Example: Institut de l'Ebre
 */
-$config['institution_name']	= "EbreTIC Enginyeria";
+$config['institution_name']	= "EbreTIC Enginyeria SL";
 
 /*
 |--------------------------------------------------------------------------
@@ -158,7 +158,7 @@ $config['realms'] = "mysql,ldap";
 | 
 | Example: ldap
 */
-$config['default_realm'] = "ldap";
+$config['default_realm'] = "mysql";
 
 /*
 |--------------------------------------------------------------------------
@@ -224,7 +224,7 @@ $config['organizationalunit_group'] = "inventory_organizationalunit";
 | 
 | Example: inventory_readonly
 */
-$config['admin_group'] = "inventory_admin";
+$config['inventory_admin_group'] = "inventory_admin";
 
 /*
 |--------------------------------------------------------------------------
@@ -353,7 +353,8 @@ $config['default_fields_table_material'] = array (
 *   'externalIDTypeID',
     'name',
     'shortName',       
-    'description',      
+    'description',   
+    'barcodeId',   
     'entryDate',        
     'last_update',      
     'creationUserId',   
@@ -366,6 +367,7 @@ $config['default_fields_table_externalIDType'] = array (
     'name',
     'shortName',       
     'description',      
+    'barcodeId',
     'entryDate',           
     'last_update',         
     'creationUserId',      
@@ -601,7 +603,95 @@ $config['default_fields_table_users'] = array (
 $config['default_fields_table_groups'] = array (
     'name',
     'description'   
-    ); 
+    );
+    
+/*       
+|--------------------------------------------------------------------------
+| DEFAULT FIELDS TABLE  user_preferences
+|--------------------------------------------------------------------------
+  `user_preferencesId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `language` enum('catalan','spanish','english') NOT NULL DEFAULT 'catalan',
+  `theme` enum('flexigrid','datatables','twitter-bootstrap') NOT NULL DEFAULT 'flexigrid',
+  `description` text,
+  `entryDate` datetime NOT NULL,
+  `manualEntryDate` datetime NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `manualLast_update` datetime NOT NULL,
+  `creationUserId` int(11) DEFAULT NULL,
+  `lastupdateUserId` int(11) DEFAULT NULL,
+  `markedForDeletion` enum('n','y') NOT NULL DEFAULT 'n',
+  `markedForDeletionDate` datetime NOT NULL,
+* 
+*/
+
+$config['default_fields_table_user_preferences'] = array (
+    'userId',   
+    'language',
+    'theme',   
+    'last_update'
+    );
+    
+/*
+|--------------------------------------------------------------------------
+| DEFAULT FIELDS TABLE  barcode
+|--------------------------------------------------------------------------
+*   'barcodeId',
+    'name',
+    'shortName',       
+    'description',      
+    'entryDate',        
+    'last_update',      
+    'creationUserId',   
+    'lastupdateUserId', 
+    'markedForDeletion',
+    'markedForDeletionDate',
+* 
+*/
+$config['default_fields_table_barcode'] = array (
+    'name',
+    'shortName',       
+    'description',      
+    'entryDate',           
+    'last_update',         
+    'creationUserId',      
+    'lastupdateUserId',    
+    'markedForDeletion',   
+    'markedForDeletionDate'
+    );         
+
+/*       
+|--------------------------------------------------------------------------
+| DEFAULT VALUES FOR USER FORM
+|--------------------------------------------------------------------------
+*/    
+$config['user_form_default_group'] = 1;     
+
+//MainOrganizationaUnitId
+$config['user_form_default_MainOrganizationaUnitId'] = 1;    
+
+//Default group
+$config['user_form_default_group'] = 1;    
+    
+/*       
+|--------------------------------------------------------------------------
+| DEFAULT SUPPORTED THEMES
+|--------------------------------------------------------------------------
+*/
+
+$config['supported_themes'] = array (
+    'flexigrid',   
+    'datatables',
+    'twitter-bootstrap'
+    );     
+    
+/*       
+|--------------------------------------------------------------------------
+| DEFAULT THEME
+|--------------------------------------------------------------------------
+*/
+
+$config['default_theme'] = "flexigrid";
 
 /* End of file inventory.php */
 /* Location: ./application/config/inventory.php */
