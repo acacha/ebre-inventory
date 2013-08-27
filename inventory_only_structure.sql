@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `externalIDType` (
   `name` varchar(150) NOT NULL,
   `shortName` varchar(150) NOT NULL,
   `description` text,
+  `barcodeid` int(11) NOT NULL,
   `entryDate` datetime NOT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `creationUserId` int(11) DEFAULT NULL,
