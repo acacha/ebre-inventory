@@ -135,6 +135,7 @@ class Main extends CI_Controller {
             '//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.min.js',            
             base_url('assets/js/bootstrap.min.js'),
             base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'),
+            base_url('assets/grocery_crud/js/common/lazyload-min.js'),
             base_url('assets/js/jquery-ui.min.js'),
             base_url('assets/js/jquery-chosen-sortable.js'),
             );
