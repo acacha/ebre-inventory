@@ -974,7 +974,7 @@ class Main extends CI_Controller {
     function edit_field_callback_entryDate($value, $primary_key){  
 	  return '<input type="text" class="datetime-input hasDatepicker" maxlength="19" value="'. date('d/m/Y H:i:s', strtotime($value)) .'" name="entryDate" id="field-entryDate" readonly>';    
     }
-    
+       
     function edit_field_callback_lastupdate($value, $primary_key){
 	  return '<input type="text" class="datetime-input hasDatepicker" maxlength="19" value="'. date('d/m/Y H:i:s', strtotime($value)) .'" name="entryDate" id="field-last_update" readonly>';    	
 	}
@@ -1000,7 +1000,7 @@ class Main extends CI_Controller {
 		
 		return $post_array;
     }
-    
+       
     //UPDATE AUTOMATIC FIELDS BEFORE INSERT
     function before_insert_user_preference_callback($post_array, $primary_key) {
 		//UPDATE LAST UPDATE FIELD
@@ -1117,77 +1117,12 @@ class Main extends CI_Controller {
 
 		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
         $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
-        $this->load->view('externalid_view.php',$output);
+        $this->load->view('barcode_view.php',$output);
         
 	    $this->load->view('include/footer');                        
     
     }
        
-	public function express_externalIDType() {
-		if (!$this->ion_auth->logged_in())
-		{
-			//redirect them to the login page
-			redirect($this->login_page, 'refresh');
-		}
-		
-		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
-		$readonly_group = $this->config->item('readonly_group');
-		if ($this->ion_auth->in_group($readonly_group)) {
-			$this->grocery_crud->unset_add();
-			$this->grocery_crud->unset_edit();
-			$this->grocery_crud->unset_delete();
-		}
-		
-		$this->current_table="externalIDType";
-        $this->grocery_crud->set_table($this->current_table);
-        
-        //Establish subject:
-        $this->grocery_crud->set_subject(lang('externalID_subject'));
-                  
-        //COMMON_COLUMNS               
-        $this->set_common_columns_name();
-        
-        //SPECIFIC COLUMNS
-        $this->grocery_crud->display_as('barcodeId',lang('barcodeId'));
-        
-        //Establish fields/columns order and wich camps to show
-        $this->grocery_crud->columns($this->session->userdata('externalIDType_current_fields_to_show')); 
-                                                         
-        //Camps obligatoris
-        $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
- 
-        //CALLBACKS        
-        $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
-        $this->grocery_crud->callback_edit_field('entryDate',array($this,'edit_field_callback_entryDate'));
-        
-        //Camps last update no editable i automàtic        
-        $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
-        
-        //USER ID
-        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
-        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
-		
-        //UPDATE AUTOMATIC FIELDS
-		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
-		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
-		
-		$this->grocery_crud->unset_add_fields('last_update');
-		
-		
-		$this->set_theme($this->grocery_crud);
-		
-		$this->load_header($output);        
-		
-        $output = $this->grocery_crud->render();
-
-		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
-        $this->load->view('externalid_view.php',$output);
-        
-	}
-
 	public function externalIDType() {
 
         if (!$this->ion_auth->logged_in())
@@ -1900,8 +1835,8 @@ public function groups(){
 protected function set_common_columns_name()
 {
        //COMMON_COLUMNS                      
-       $this->grocery_crud->display_as('name',lang('name'));       
-       $this->grocery_crud->display_as('shortName',lang('shortName'));       
+       $this->set_express_common_columns_name();
+      
        $this->grocery_crud->display_as('description',lang('description'));       
        $this->grocery_crud->display_as('entryDate',lang('entryDate'));       
        $this->grocery_crud->display_as('manualEntryDate',lang('manualEntryDate'));       
@@ -1911,6 +1846,13 @@ protected function set_common_columns_name()
        $this->grocery_crud->display_as('lastupdateUserId',lang('lastupdateUserId'));  
        $this->grocery_crud->display_as('markedForDeletion',lang('markedForDeletion'));
        $this->grocery_crud->display_as('markedForDeletionDate',lang('markedForDeletionDate'));
+}
+
+protected function set_express_common_columns_name()
+{
+       //COMMON_COLUMNS                      
+       $this->grocery_crud->display_as('name',lang('name'));       
+       $this->grocery_crud->display_as('shortName',lang('shortName'));       
 }
 
 public function devices() {

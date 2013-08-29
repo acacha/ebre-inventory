@@ -232,3 +232,8 @@ $lang['MainOrganizationaUnitId']="Unitat organitzativa";
 //QR
 $lang['id_is_needed_to_generate_qr_codes']="Cal indicar un identificador per generar els codis de barres i codis QR";
 $lang['inventory_object_url']="URL del objecte";
+
+$lang['show_express_form']="Mostrar el formulari express";
+$lang['hide_express_form']="Amagar el formulari express";
+
+$lang['Add']="Afegir";

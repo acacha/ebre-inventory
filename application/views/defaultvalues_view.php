@@ -3,6 +3,8 @@
 var ei_fnOpenEditForm = function(this_element){
 
 	var href_url = this_element.attr("href");
+	
+	alert(href_url);
 
 	var dialog_height = $(window).height() - 80;
 
@@ -56,7 +58,70 @@ var ei_fnOpenEditForm = function(this_element){
 	});
 };
 
+var pageInitialized = false;
+
 $(document).ready(function(){
+	
+//AVOID DOCUMENT READY TO EXECUTE TWO TIMES
+
+if (pageInitialized) return;
+pageInitialized = true;
+//alert("Document ready!");
+
+//Implement express
+
+//CHECK IF EXPRESS IS REQUESTED BY ANCHOR #express_form
+express_form=false;
+if(window.location.hash) {
+	var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
+	if (hash == "express_form") {
+		express_form=true;
+	}
+}
+
+//FLEXIGRID
+$(".ftitle-left").after('<div class="ftitle-left" id="express"> &nbsp;<a href="#"><?php echo lang("show_express_form");?></a></div><div class="ftitle-left" id="noexpress" style="display:none;"> &nbsp;<a href="#"><?php echo lang("hide_express_form");?></a></div>');
+
+//DATATABLES THEME
+$(".form-title-left").after('<div class="floatL form-title-left" id="express" style=";"> &nbsp;<a href="#"> ( <?php echo lang("show_express_form");?> ) </a></div><div class="floatL form-title-left" id="noexpress" style="display:none;"> &nbsp;<a href="#"> ( <?php echo lang("hide_express_form");?> )</a></div>');
+
+//BOOTSTRAP THEME
+$("h2").after('<div id="express" class="span12"><a href="#"><?php echo lang("show_express_form");?></a></div><div class="span12" id="noexpress" style="display:none;"><a href="#"><?php echo lang("hide_express_form");?></a></div>');
+
+$('#express,#noexpress').unbind('click');
+$('#express,#noexpress').click(function(){
+	
+	$('#express').toggle();
+	$('#noexpress').toggle();
+	$('#publicId_field_box').toggle();
+	$('#externalID_field_box').toggle();
+	$('#externalIDType_field_box').toggle();
+	$('#description_field_box').toggle();
+	$('#materialId_field_box').toggle();
+	$('#brandId_field_box').toggle();
+	$('#modelId_field_box').toggle();
+	$('#entryDate_field_box').toggle();
+	$('#manualEntryDate_field_box').toggle();
+	$('#creationUserId_field_box').toggle();
+	$('#lastupdateUserId_field_box').toggle();
+	$('#location_field_box').toggle();
+	$('#quantityInStock_field_box').toggle();
+	$('#price_field_box').toggle();
+	$('#moneySourceId_field_box').toggle();
+	$('#providerId_field_box').toggle();
+	$('#preservationState_field_box').toggle();
+	$('#markedForDeletion_field_box').toggle();
+	$('#markedForDeletionDate_field_box').toggle();
+	$('#file_url_field_box').toggle();
+	$('#mainOrganizationaUnitId_field_box').toggle();
+	$('#OwnerOrganizationalUnit_field_box').toggle();
+	
+	
+});
+
+if (express_form) {
+	$('#express').trigger('click');
+}
 	
 $('.qr_button').unbind('click');
 $('.qr_button').click(function(){
@@ -117,8 +182,13 @@ $('.qr_button').click(function(){
  
  //Add URL to express add External Id Type
  //externalIDType_input_box
- $("#externalIDType_input_box").after("&nbsp; <a href=\"<?php echo base_url('index.php/main/externalIDType/add');?>\">Afegir</a>");
+ $("#externalIDType_input_box").after("&nbsp; <a id=\"externalIDType_link\" href=\"<?php echo base_url('index.php/main/externalIDType/add#express_form');?>\"><?php echo lang("Add");?></a>");
 
+$('#externalIDType_link').unbind('click');
+$('#externalIDType_link').click(function(){
+	ei_fnOpenEditForm($(this));
+	return false;
+});
  
  
  //field-mainOrganizationaUnitId
