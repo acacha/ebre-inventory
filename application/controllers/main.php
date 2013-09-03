@@ -434,16 +434,10 @@ class Main extends CI_Controller {
 		}catch(Exception $e){
 			show_error($e->getMessage().' --- '.$e->getTraceAsString());
 		}
-		
-		/*
-		if($state == 'insert_validation') {
-			show_error("FORCED ERROR IN INSERT VALIDATION");
-		}*/
-		
+			
 		$skip_grocerycrud=false;		
 		$default_values2 = array();
 		
-		//echo "state:" . $state;
 		
 		//SKIP IS USER IS ADMIN	
 		if (!$this->ion_auth->in_group($inventory_admin_group)) {
@@ -462,11 +456,9 @@ class Main extends CI_Controller {
 				
 			} 
 			elseif($state == 'insert_validation') {
-				//TODO
 				//CHECK IF EDIT IS ALLOWED DEPENDING ON USER ROLES	
 				$primary_key = $state_info->primary_key;
 				
-				//echo "<br/>primary_key:". $primary_key;
 				$skip_grocerycrud=true;
 				$alternate_view_to_grocerycrud="insert_not_allowed.php";
 				
@@ -517,7 +509,8 @@ class Main extends CI_Controller {
 		}
 		$this->grocery_crud->unique_fields('userId');
 		
-		$this->grocery_crud->set_table('user_preferences');
+		$this->current_table="user_preferences";
+        $this->grocery_crud->set_table($this->current_table);
         
         //Establish subject:
         $this->grocery_crud->set_subject(lang('user_preferences_subject'));
@@ -578,7 +571,9 @@ class Main extends CI_Controller {
 			$this->load_header($output,true,false);
                
 			// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-			$this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+			$default_values=$this->_get_default_values();
+			$default_values["table_name"]=$this->current_table;
+			$this->load->view('defaultvalues_view.php',$default_values); 
         
 			//ADMIN USER: SHOW HELPER TO EDIT HIS PREFERENCES: SHORTCUT
 			//GROCERYCRUD VIEW
@@ -669,13 +664,12 @@ class Main extends CI_Controller {
 			$this->grocery_crud->unset_delete();
 		}
 		
-		$table_name="inventory_object";
-		
 		//ESPECIFIC CUSTOM ACTIONS
         $this->grocery_crud->add_action(lang('Images'),base_url('assets/img/images.png'), '/main/images',"images_button");
         $this->grocery_crud->add_action(lang('QRCode'),base_url('assets/img/qr_code.png'), '/qr/generate',"qr_button");
 		
-		$this->grocery_crud->set_table($table_name);
+		$this->current_table="inventory_object";
+        $this->grocery_crud->set_table($this->current_table);
 		
 		//FILTER BY ORGANIZATIONAL UNIT
 		//Relation n a n table: inventory_object_organizational_unit
@@ -805,9 +799,9 @@ class Main extends CI_Controller {
         $this->load_header($output);
                
         // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $default_values=$this->_get_default_values();
-        $default_values["table_name"]=$table_name;
-        $this->load->view('defaultvalues_view.php',$default_values); 
+		$default_values=$this->_get_default_values();
+		$default_values["table_name"]=$this->current_table;
+		$this->load->view('defaultvalues_view.php',$default_values);  
                 
         //GROCERYCRUD VIEW
         $this->load->view('inventory_object_view.php',$output);        
@@ -1184,7 +1178,11 @@ class Main extends CI_Controller {
         $this->load_header($output);        
 
 		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+	    $default_values=$this->_get_default_values();
+	    $default_values["table_name"]=$this->current_table;
+	    $this->load->view('defaultvalues_view.php',$default_values);   
+	    
         $this->load->view('barcode_view.php',$output);
         
 	    $this->load->view('include/footer');                        
@@ -1253,7 +1251,10 @@ class Main extends CI_Controller {
         $this->load_header($output);        
 
 		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+		$default_values=$this->_get_default_values();
+		$default_values["table_name"]=$this->current_table;
+		$this->load->view('defaultvalues_view.php',$default_values);  
         $this->load->view('externalid_view.php',$output);
         
 	    $this->load->view('include/footer');                        
@@ -1327,7 +1328,10 @@ class Main extends CI_Controller {
         $this->load_header($output);        
 
 		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+		$default_values=$this->_get_default_values();
+		$default_values["table_name"]=$this->current_table;
+		$this->load->view('defaultvalues_view.php',$default_values); 
         $this->load->view('organizational_unit_view.php',$output);
         
 	    $this->load->view('include/footer');                        
@@ -1402,7 +1406,10 @@ class Main extends CI_Controller {
         
         $this->load_header($output);
         // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+		$default_values=$this->_get_default_values();
+		$default_values["table_name"]=$this->current_table;
+		$this->load->view('defaultvalues_view.php',$default_values); 
         $this->load->view('grocerycrud_view.php',$output);
                 
         $this->load->view('include/footer');                            
@@ -1471,7 +1478,10 @@ public function material()
 
         $this->load_header($output);          
         // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values());            
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+		$default_values=$this->_get_default_values();
+		$default_values["table_name"]=$this->current_table;
+		$this->load->view('defaultvalues_view.php',$default_values);            
         $this->load->view('material_view.php',$output); 
         $this->load->view('include/footer');                            
 } 
@@ -1532,7 +1542,11 @@ public function brand()
 
         $this->load_header($output);          
         // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values());            
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+		$default_values=$this->_get_default_values();
+		$default_values["table_name"]=$this->current_table;
+		$this->load->view('defaultvalues_view.php',$default_values);             
+		
         $this->load->view('material_view.php',$output); 
         $this->load->view('include/footer');                            
 }
@@ -1598,7 +1612,11 @@ public function model()
 
         $this->load_header($output);          
         // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values());            
+        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+		$default_values=$this->_get_default_values();
+		$default_values["table_name"]=$this->current_table;
+		$this->load->view('defaultvalues_view.php',$default_values);             
+		
         $this->load->view('material_view.php',$output); 
         $this->load->view('include/footer');                            
 }	
@@ -1655,7 +1673,10 @@ public function provider()
        $output = $this->grocery_crud->render(); 
                                                    
        $this->load_header($output);
-       $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+       // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+	   $default_values=$this->_get_default_values();
+	   $default_values["table_name"]=$this->current_table;
+	   $this->load->view('defaultvalues_view.php',$default_values);  
        $this->load->view('provider_view.php',$output);
        $this->load->view('include/footer');
 }
@@ -1714,7 +1735,11 @@ public function money_source()
         $output = $this->grocery_crud->render();
                 
         $this->load_header($output);
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+       // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+	    $default_values=$this->_get_default_values();
+	    $default_values["table_name"]=$this->current_table;
+	    $this->load->view('defaultvalues_view.php',$default_values);   
+	    
         $this->load->view('money_source_view.php',$output);
         $this->load->view('include/footer');
 }
@@ -1734,7 +1759,8 @@ public function users() {
 	    }
 		$user_groups = $this->ion_auth->get_users_groups($this->session->userdata('user_id'))->result();
 		
-	    $this->current_table="users";
+		$table_name="users";
+	    $this->current_table=$table_name;
         $this->grocery_crud->set_table($this->current_table);  
         
         $this->grocery_crud->add_fields('first_name','last_name','username','password','verify_password','mainOrganizationaUnitId','email','active','company','phone','groups','created_on','ip_address');
@@ -1823,7 +1849,9 @@ public function users() {
         $this->load_header($output);
         
         // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+        $default_values=$this->_get_default_values();
+        $default_values["table_name"]=$table_name;
+        $this->load->view('defaultvalues_view.php',$default_values); 
                
         $this->load->view('users_view.php',$output);
         $this->load->view('include/footer');
@@ -1871,7 +1899,8 @@ public function groups(){
 			$this->grocery_crud->unset_edit();
 			$this->grocery_crud->unset_delete();
 	   }
-	   $this->current_table="groups";
+	   $table_name="groups";
+	   $this->current_table=$table_name;
        $this->grocery_crud->set_table($this->current_table);  
        
        $this->grocery_crud->required_fields('name');
@@ -1896,6 +1925,12 @@ public function groups(){
        $output = $this->grocery_crud->render();
        
        $this->load_header($output);
+       
+       // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+       $default_values=$this->_get_default_values();
+       $default_values["table_name"]=$table_name;
+       $this->load->view('defaultvalues_view.php',$default_values); 
+       
        $this->load->view('groups_view.php',$output);
        $this->load->view('include/footer');                          
 }      
