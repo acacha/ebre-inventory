@@ -669,11 +669,13 @@ class Main extends CI_Controller {
 			$this->grocery_crud->unset_delete();
 		}
 		
+		$table_name="inventory_object";
+		
 		//ESPECIFIC CUSTOM ACTIONS
-        $this->grocery_crud->add_action(lang('Images'),base_url('assets/img/images.png'), '/main/images');
+        $this->grocery_crud->add_action(lang('Images'),base_url('assets/img/images.png'), '/main/images',"images_button");
         $this->grocery_crud->add_action(lang('QRCode'),base_url('assets/img/qr_code.png'), '/qr/generate',"qr_button");
 		
-		$this->grocery_crud->set_table('inventory_object');
+		$this->grocery_crud->set_table($table_name);
 		
 		//FILTER BY ORGANIZATIONAL UNIT
 		//Relation n a n table: inventory_object_organizational_unit
@@ -748,7 +750,7 @@ class Main extends CI_Controller {
         //Example de validació. Natural no zero
         $this->grocery_crud->set_rules('quantityInStock','Quantitat','is_natural_no_zero');
        		
-		$this->grocery_crud->callback_add_field('quantityInStock',array($this,'add_field_callback_quantityInStock'));
+		//$this->grocery_crud->callback_add_field('quantityInStock',array($this,'add_field_callback_quantityInStock'));
 		
 		$this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
 		
@@ -765,7 +767,7 @@ class Main extends CI_Controller {
 		$this->grocery_crud->callback_edit_field('last_update',array($this,'edit_callback_last_update'));
 		
 		//$this->grocery_crud->callback_add_field('markedForDeletion',array($this,'add_field_callback_markedForDeletionDate'));
-		$this->grocery_crud->callback_column('price',array($this,'valueToEuro'));
+		//$this->grocery_crud->callback_column('price',array($this,'valueToEuro'));
 		$this->grocery_crud->callback_field('Link Imatges',array($this,'field_callback_Link'));
 		
 		//UPDATE AUTOMATIC FIELDS
@@ -792,20 +794,83 @@ class Main extends CI_Controller {
 			$this->grocery_crud->field_type('mainOrganizationaUnitId', 'hidden', $current_organizational_unit);
 		}
 		
+		//DEFAULT VALUES
+		//$this->grocery_crud->set_default_value($table_name,"materialId","2");
+		
 		$this->set_theme($this->grocery_crud);
         
         $output = $this->grocery_crud->render();
+        //IF REQUEST IS POST AND AJAX GROCERY CRUD returns JSON response and stop here in render. All aboce this point is not executed
               
         $this->load_header($output);
                
         // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        $this->load->view('defaultvalues_view.php',$this->_get_default_values()); 
+        $default_values=$this->_get_default_values();
+        $default_values["table_name"]=$table_name;
+        $this->load->view('defaultvalues_view.php',$default_values); 
                 
         //GROCERYCRUD VIEW
         $this->load->view('inventory_object_view.php',$output);        
                 
         $this->load->view('include/footer');   
     }
+    
+    public function get_dropdown_values($table_name,$field_name) {
+		//ONLY LOGGED USERS CAN ACCES TO THIS CONTROLLER
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect( $this->login_page . "?redirect=" . urlencode(uri_string(current_url)), 'refresh');
+		}
+		//ONLY RESPONSE TO POST AJAX PETITIONS		
+		if ($this->_is_ajax()) {
+			@ob_end_clean();
+			$new_options=array();
+			$primary_key=$this->inventory_model->get_primary_key($table_name);
+			$dropdown_values=$this->inventory_model->get_dropdown_values($table_name,$field_name,$primary_key);
+			
+			$results= (object)array(
+					'output' => $dropdown_values,
+					'key'    => $primary_key
+			);
+
+			echo json_encode($results);
+			die;
+		}
+	}
+    
+    public function defaultvalues_view($table_name) {
+		//ONLY LOGGED USERS CAN ACCES TO THIS CONTROLLER
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect( $this->login_page . "?redirect=" . urlencode(uri_string(current_url)), 'refresh');
+		}
+		
+		//AJAX & POST
+		if ($this->_is_ajax()) {
+			@ob_end_clean();
+			
+			// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+			$default_values=$this->_get_default_values();
+			$default_values["table_name"]=$table_name;
+			$default_values["express_form"]=true;
+			$default_values_view_as_string = $this->load->view('defaultvalues_view.php',$default_values,true); 
+        
+			$results= (object)array(
+					'output' => $default_values_view_as_string,
+			);
+
+			echo json_encode($results);
+			die;
+		} else { //SIMPLE GET
+			// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
+			$default_values=$this->_get_default_values();
+			$default_values["table_name"]=$table_name;
+			$default_values["express_form"]=true;
+			$this->load->view('defaultvalues_view.php',$default_values); 
+		}
+	}
     
     protected function set_theme($grocery_crud) {
 		
@@ -941,6 +1006,8 @@ class Main extends CI_Controller {
 			$this->config->item('user_form_default_group');
 			
 		$defaultvalues['user_form_default_active']=1;
+		
+		$default_values['express_form']=false;
      	
 		return $defaultvalues;
 	}

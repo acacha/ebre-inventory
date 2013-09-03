@@ -16,6 +16,33 @@ class inventory_Model  extends CI_Model  {
         $this->load->database();
     }
     
+    function get_primary_key($table_name) {
+		$fields = $this->db->field_data($table_name);
+		
+		foreach ($fields as $field)	{
+			if ($field->primary_key) {
+					return $field->name;
+			}
+		} 	
+		return false;
+	}
+    
+    function get_dropdown_values($table_name,$field_name,$primary_key=null,$order_by="asc") {
+		
+		$primary_key_field_name;
+		if ($primary_key==null)
+			$primary_key_field_name=$this->get_primary_key($table_name);
+		else
+			$primary_key_field_name=$primary_key;
+		
+		$this->db->select("$primary_key_field_name,$field_name");
+		$this->db->order_by($field_name, $order_by); 
+		$query = $this->db->get($table_name);
+		if ($query->num_rows() != 0)
+			return $query->result();
+		return false;
+	}
+    
     function user_have_preferences ($userid) {
 		$this->db->where('userId',$userid);
 		$query = $this->db->get('user_preferences');
