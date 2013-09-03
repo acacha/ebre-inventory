@@ -55,6 +55,7 @@ class Inventory_auth extends Auth {
         $this->group_edit_page = "main/groups/edit";
         $this->group_add_page = "main/groups/add";
         $this->group_delete_page = "main/groups/delete";
+        $this->create_user_view = "http://gosa.iesebre.com";
         
         //GET REALMS FROM CONFIG
         if ($this->config->item('realms')!="") {

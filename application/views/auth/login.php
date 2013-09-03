@@ -112,7 +112,7 @@ $('.selectpicker').selectpicker('refresh');
         <button class="btn btn-large btn-primary" type="submit"><?php echo lang('Login');?></button>
        
        <?php echo form_close(); ?>
-       <center><p><a href="todo_register"><?php echo lang('Register');?></a></p></center>
+       <center><p><a href="<?php echo $register_url;?>"><?php echo lang('Register');?></a></p></center>
        <center><p><a href="forgot_password"><?php echo lang('login_forgot_password');?></a></p></center>
        <br/>
        <center><p><font size="-3">© <a href="http://acacha.org/mediawiki/index.php/Ebre-inventory">Ebre-inventory</a> és una aplicació d'<a href="http://www.ebretic.com/" rel="author"> Ebretic Enginyeria SL (www.ebretic.com)</a><br/>creada per <a href="http://acacha.org">Sergi Tur Badenas</a> i Josep Llaó Angelats</font></p></center>

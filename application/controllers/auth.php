@@ -83,6 +83,7 @@ class Auth extends CI_Controller {
 	{
 		$this->data['title'] = "Login";
 		$this->data['redirect'] = "";
+		$this->data['register_url'] = $this->create_user_view;;
 		
 		$redirect_value=$this->_getvar("redirect");
 		if ($redirect_value) {
