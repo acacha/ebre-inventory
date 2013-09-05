@@ -176,7 +176,7 @@ function index()
 		}
 		else
 		{
-			redirect($this->users_list_page, 'refresh');
+			redirect($this->after_succesful_login_page, 'refresh');
 		}
 	}
 	
