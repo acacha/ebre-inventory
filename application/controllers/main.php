@@ -1152,8 +1152,11 @@ class Main extends CI_Controller {
         //Establish fields/columns order and wich camps to show
         $this->grocery_crud->columns($this->session->userdata('barcode_current_fields_to_show')); 
                                                          
-        //Camps obligatoris
+        //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+        //Express fields
+        $this->grocery_crud->express_fields('name','shortName');
  
         //CALLBACKS        
         $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
@@ -1222,8 +1225,11 @@ class Main extends CI_Controller {
         //Establish fields/columns order and wich camps to show
         $this->grocery_crud->columns($this->session->userdata('externalIDType_current_fields_to_show')); 
                                                          
-        //Camps obligatoris
+        //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+        //Camps express
+        $this->grocery_crud->express_fields('name','shortName','barcodeId');
  
         //CALLBACKS        
         $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
@@ -1295,8 +1301,11 @@ class Main extends CI_Controller {
         //Establish fields/columns order and wich camps to show
         $this->grocery_crud->columns($this->session->userdata('organizational_unit_current_fields_to_show'));
                                                          
-        //Camps obligatoris
+        //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+        //express fields
+        $this->grocery_crud->express_fields('name','shortName','externalCode');
 
         //Camps last update no editable i automàtic        
         $this->grocery_crud->callback_add_field('last_update',array($this,'add_field_callback_last_update'));
@@ -1364,8 +1373,11 @@ class Main extends CI_Controller {
         //ESTABLISH SUBJECT
         $this->grocery_crud->set_subject(lang('location_subject'));                
         
-        //Camps obligatoris
+        //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+        //Express fields
+        $this->grocery_crud->express_fields('name','shortName','parentLocation');
         
         //CALLBACKS        
         $this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
@@ -1438,8 +1450,11 @@ public function material()
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('material_subject'));
        
-       //Camps obligatoris
+       //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+       
+       //Express fields
+        $this->grocery_crud->express_fields('name','shortName','parentMaterialId');
                
        //COMMON_COLUMNS                 
        $this->set_common_columns_name();
@@ -1508,8 +1523,11 @@ public function brand()
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('brand_subject'));
        
-       //Camps obligatoris
-        $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+       //Mandatory fields
+       $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+       //express fields
+       $this->grocery_crud->express_fields('name','shortName');
                
        //COMMON_COLUMNS                 
        $this->set_common_columns_name();
@@ -1573,8 +1591,11 @@ public function model()
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('model_subject'));
        
-       //Camps obligatoris
-        $this->grocery_crud->required_fields('brandId','name','shortName','markedForDeletion');
+       //Mandatory fields
+       $this->grocery_crud->required_fields('brandId','name','shortName','markedForDeletion');
+        
+       //express fields
+       $this->grocery_crud->express_fields('name','shortName','brandId');
                
        //COMMON_COLUMNS                 
        $this->set_common_columns_name();
@@ -1641,8 +1662,11 @@ public function provider()
        //ESTABLISH SUBJECT
        $this->grocery_crud->set_subject(lang('provider_subject'));
        
-       //Camps obligatoris
-        $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+       //Mandatory fields
+       $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+       //express fields
+       $this->grocery_crud->express_fields('name','shortName');
                               
        //COMMON_COLUMNS                 
        $this->set_common_columns_name();
@@ -1704,8 +1728,11 @@ public function money_source()
         //ESTABLISH SUBJECT
         $this->grocery_crud->set_subject(lang('money_source_id_subject'));
 
-        //Camps obligatoris
+        //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','markedForDeletion');
+        
+        //express fields
+		$this->grocery_crud->express_fields('name','shortName');
 
         //COMMON_COLUMNS                 
         $this->set_common_columns_name();
