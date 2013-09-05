@@ -708,9 +708,12 @@ class Main extends CI_Controller {
         //http://www.grocerycrud.com/documentation/options_functions/fields
         //$crud->fields('customerName','contactLastName','phone','city','country','creditLimit');
         
-        //Camps obligatoris
+        //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','location','markedForDeletion');
         //$this->grocery_crud->required_fields('externalCode','name','shortName','location','markedForDeletion');
+        
+        //Express fields
+        $this->grocery_crud->express_fields('name','shortName');
 
         $this->grocery_crud->unset_add_fields('last_update','manualLast_update');
         
@@ -1178,7 +1181,6 @@ class Main extends CI_Controller {
         $this->load_header($output);        
 
 		// VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
-        // VIEW WITH DINAMIC JAVASCRIPT. Purpose: set default values
 	    $default_values=$this->_get_default_values();
 	    $default_values["table_name"]=$this->current_table;
 	    $this->load->view('defaultvalues_view.php',$default_values);   

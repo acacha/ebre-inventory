@@ -142,69 +142,6 @@ $(document).ready(function(){
  * OUTSIDE FORM INITIALIZATION
  ****************************************/
  
- /** INIT EXPRESS IMPLEMENTATION *********/
-	/** TODO: MOVE TO GROCERY CRUD */
- //Implement express
- //CHECK IF EXPRESS IS REQUESTED BY ANCHOR #express_form
- //DEFAULT TYPE OF FORM?
- express_form=false;
- <?php if (isset($express_form)): ?>
-  express_form=<?php echo $express_form;?>;
- <?php endif; ?>
-
- if(window.location.hash) {
-	var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
-	if (hash == "express_form") {
-		express_form=true;
-	}
- } 
-
- //FLEXIGRID
- //$("#ftitle-left_<?php echo $table_name;?>").after('<div class="ftitle-left" id="express_<?php echo $table_name;?>"> &nbsp;<a href="#"><?php echo lang("show_express_form");?></a></div><div class="ftitle-left" id="noexpress_<?php echo $table_name;?>" style="display:none;"> &nbsp;<a href="#"><?php echo lang("hide_express_form");?></a></div>');
- 
- //DATATABLES THEME
- $(".form-title-left").after('<div class="floatL form-title-left" id="express_<?php echo $table_name;?>" style=";"> &nbsp;<a href="#"> ( <?php echo lang("show_express_form");?> ) </a></div><div class="floatL form-title-left" id="noexpress_<?php echo $table_name;?>" style="display:none;"> &nbsp;<a href="#"> ( <?php echo lang("hide_express_form");?> )</a></div>');
- 
- //BOOTSTRAP THEME
- $("h2").after('<div id="express_<?php echo $table_name;?>" class="span12"><a href="#"><?php echo lang("show_express_form");?></a></div><div class="span12" id="noexpress_<?php echo $table_name;?>" style="display:none;"><a href="#"><?php echo lang("hide_express_form");?></a></div>');
- 
- $('#express_<?php echo $table_name;?>,#noexpress_<?php echo $table_name;?>').unbind('click');
- $('#express_<?php echo $table_name;?>,#noexpress_<?php echo $table_name;?>').click(function(){
-	
-	$('#express_<?php echo $table_name;?>').toggle();
-	$('#noexpress_<?php echo $table_name;?>').toggle();
-	$('#publicId_<?php echo $table_name?>_field_box').toggle();
-	$('#externalID_<?php echo $table_name?>_field_box').toggle();
-	$('#externalIDType_<?php echo $table_name?>_field_box').toggle();
-	$('#description_<?php echo $table_name?>_field_box').toggle();
-	$('#materialId_<?php echo $table_name?>_field_box').toggle();
-	$('#brandId_<?php echo $table_name?>_field_box').toggle();
-	$('#modelId_<?php echo $table_name?>_field_box').toggle();
-	$('#entryDate_<?php echo $table_name?>_field_box').toggle();
-	$('#manualEntryDate_<?php echo $table_name?>_field_box').toggle();
-	$('#creationUserId_<?php echo $table_name?>_field_box').toggle();
-	$('#lastupdateUserId_<?php echo $table_name?>_field_box').toggle();
-	$('#location_<?php echo $table_name?>_field_box').toggle();
-	$('#quantityInStock_<?php echo $table_name?>_field_box').toggle();
-	$('#price_<?php echo $table_name?>_field_box').toggle();
-	$('#moneySourceId_<?php echo $table_name?>_field_box').toggle();
-	$('#providerId_<?php echo $table_name?>_field_box').toggle();
-	$('#preservationState_<?php echo $table_name?>_field_box').toggle();
-	$('#markedForDeletion_<?php echo $table_name?>_field_box').toggle();
-	$('#markedForDeletionDate_<?php echo $table_name?>_field_box').toggle();
-	$('#file_url_<?php echo $table_name?>_field_box').toggle();
-	$('#mainOrganizationaUnitId_<?php echo $table_name?>_field_box').toggle();
-	$('#OwnerOrganizationalUnit_<?php echo $table_name?>_field_box').toggle();
-	
-	
- });
-
- if (express_form) {
- 	$('#express_<?php echo $table_name;?>').trigger('click');
- }
-
- /** END EXPRESS IMPLEMENTATION *********/
- 
  /** READONLY IMPLEMENTATION *********/
  //CHECK IF WE SET READ ONLY URL HASH (#readonly)
  if(window.location.hash.indexOf('readonly') != -1){
