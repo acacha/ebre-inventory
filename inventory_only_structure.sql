@@ -355,6 +355,7 @@ CREATE TABLE IF NOT EXISTS `user_preferences` (
   `userId` int(11) NOT NULL,
   `language` enum('catalan','spanish','english') NOT NULL DEFAULT 'catalan',
   `theme` enum('flexigrid','datatables','twitter-bootstrap') NOT NULL DEFAULT 'flexigrid',
+  `dialogforms` enum('n','y') NOT NULL DEFAULT 'n',
   `description` text,
   `entryDate` datetime NOT NULL,
   `manualEntryDate` datetime NOT NULL,
