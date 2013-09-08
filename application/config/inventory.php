@@ -106,6 +106,17 @@ $config['default_preservationState'] = "Good";
 
 /*
 |--------------------------------------------------------------------------
+| Default markedfordeletion state
+|--------------------------------------------------------------------------
+|
+| Value of default select option for markedfordeletion field
+| 
+| Example: n
+*/
+$config['defaultfieldmarkedfordeletion'] = "n";
+
+/*
+|--------------------------------------------------------------------------
 | Default marked for deletion value
 |--------------------------------------------------------------------------
 |

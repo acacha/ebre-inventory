@@ -396,6 +396,7 @@ class Main extends CI_Controller {
 		$image_crud->set_relation_field('inventory_objectId');
 		
 		$this->set_theme($this->grocery_crud);
+		$this->set_dialogforms($this->grocery_crud);
 	
 		$output = $image_crud->render();
 	
@@ -522,6 +523,7 @@ class Main extends CI_Controller {
         $this->grocery_crud->display_as('userId',lang('userId'));
         $this->grocery_crud->display_as('language',lang('language'));
         $this->grocery_crud->display_as('theme',lang('theme'));
+        $this->grocery_crud->display_as('dialogforms',lang('dialogforms'));
         
         //Establish fields/columns order and wich camps to show
         $this->grocery_crud->columns($this->session->userdata('user_preferences_current_fields_to_show'));       
@@ -530,6 +532,9 @@ class Main extends CI_Controller {
         
         //ExternID types
         $this->grocery_crud->set_relation('userId','users','{username}');
+        
+        $this->grocery_crud->unset_dropdowndetails("userId");
+
 		
 		//ENTRY DATE
 		//DEFAULT VALUE=NOW. ONLY WHEN ADDING
@@ -558,13 +563,18 @@ class Main extends CI_Controller {
 			$this->grocery_crud->callback_before_update(array($this,'before_update_user_preference_callback'));
 		}
         
-        //CREATION USER ID
+        //USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
         
         $this->set_theme($this->grocery_crud);
+        $this->set_dialogforms($this->grocery_crud);
 		
 		try{
 			$output = $this->grocery_crud->render();
@@ -670,8 +680,8 @@ class Main extends CI_Controller {
 		
 		$this->current_table="inventory_object";
         $this->grocery_crud->set_table($this->current_table);
-		
-		//FILTER BY ORGANIZATIONAL UNIT
+        
+        //EXAMPLE FILTER BY ORGANIZATIONAL UNIT
 		//Relation n a n table: inventory_object_organizational_unit
 		//$crud->where('status','active');->where('status','active');
         
@@ -698,15 +708,9 @@ class Main extends CI_Controller {
         $this->grocery_crud->display_as('OwnerOrganizationalUnit',lang('OwnerOrganizationalUnit'));
         $this->grocery_crud->display_as('mainOrganizationaUnitId',lang('mainOrganizationaUnitId'));
         
-	
         //Establish fields/columns order and wich camps to show
+        //example: $this->grocery_crud->columns("inventory_objectId","name","shortName");       
         $this->grocery_crud->columns($this->session->userdata('inventory_object_current_fields_to_show'));       
-        
-        //$this->grocery_crud->columns("inventory_objectId","name","shortName");       
-        
-        //Limitar els camps a mostrar a add/edit
-        //http://www.grocerycrud.com/documentation/options_functions/fields
-        //$crud->fields('customerName','contactLastName','phone','city','country','creditLimit');
         
         //Mandatory fields
         $this->grocery_crud->required_fields('name','shortName','location','markedForDeletion');
@@ -715,9 +719,10 @@ class Main extends CI_Controller {
         //Express fields
         $this->grocery_crud->express_fields('name','shortName');
 
-        $this->grocery_crud->unset_add_fields('last_update','manualLast_update');
-        
-        //ExternID types
+		//Do not show in add form
+        $this->grocery_crud->unset_add_fields('manualLast_update','last_update');
+               
+        //ExternalID types
         $this->grocery_crud->set_relation('externalIDType','externalIDType','{name}',array('markedForDeletion' => 'n'));
         
         //BRAND RELATION
@@ -744,13 +749,12 @@ class Main extends CI_Controller {
         //MONEYSOURCEID
         $this->grocery_crud->set_relation('moneySourceId','money_source ','{name}',array('markedForDeletion' => 'n'));
                 
-        //Example de validació. Natural no zero
+        //Validation example. Natural non zero
         $this->grocery_crud->set_rules('quantityInStock','Quantitat','is_natural_no_zero');
-       		
-		//$this->grocery_crud->callback_add_field('quantityInStock',array($this,'add_field_callback_quantityInStock'));
-		
+       	
+       	//Show current datetime
 		$this->grocery_crud->callback_add_field('entryDate',array($this,'add_field_callback_entryDate'));
-		
+			
 		//ENTRY DATE
 		//DEFAULT VALUE=NOW. ONLY WHEN ADDING
 		//EDITING: SHOW CURRENT VALUE READONLY
@@ -762,8 +766,8 @@ class Main extends CI_Controller {
 		//EDITING: SHOW CURRENT VALUE READONLY
 		$this->grocery_crud->callback_add_field('last_update',array($this,'add_callback_last_update'));
 		$this->grocery_crud->callback_edit_field('last_update',array($this,'edit_callback_last_update'));
-		
-		//$this->grocery_crud->callback_add_field('markedForDeletion',array($this,'add_field_callback_markedForDeletionDate'));
+
+		//TODO
 		//$this->grocery_crud->callback_column('price',array($this,'valueToEuro'));
 		$this->grocery_crud->callback_field('Link Imatges',array($this,'field_callback_Link'));
 		
@@ -771,14 +775,17 @@ class Main extends CI_Controller {
 		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
 		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
 		
-	
         $this->grocery_crud->set_field_upload('file_url','assets/uploads/files');
         
-        //USER ID
+        //USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
      
 		$current_organizational_unit = $this->session->userdata("current_organizational_unit");
         if ($current_organizational_unit != "all")
@@ -795,7 +802,8 @@ class Main extends CI_Controller {
 		//$this->grocery_crud->set_default_value($table_name,"materialId","2");
 		
 		$this->set_theme($this->grocery_crud);
-        
+		$this->set_dialogforms($this->grocery_crud);
+
         $output = $this->grocery_crud->render();
         //IF REQUEST IS POST AND AJAX GROCERY CRUD returns JSON response and stop here in render. All aboce this point is not executed
               
@@ -835,7 +843,31 @@ class Main extends CI_Controller {
 			die;
 		}
 	}
-    
+	
+	public function get_last_added_value($table_name) {
+		//ONLY LOGGED USERS CAN ACCES TO THIS CONTROLLER
+		if (!$this->ion_auth->logged_in())
+		{
+			//redirect them to the login page
+			redirect( $this->login_page . "?redirect=" . urlencode(uri_string(current_url)), 'refresh');
+		}
+		//ONLY RESPONSE TO POST AJAX PETITIONS		
+		if ($this->_is_ajax()) {
+			@ob_end_clean();
+			$new_options=array();
+			$primary_key=$this->inventory_model->get_primary_key($table_name);
+			$last_added_value=$this->inventory_model->get_last_added_value($table_name,$primary_key);
+			
+			$results= (object)array(
+					'output' => $last_added_value,
+					'key'    => $primary_key
+			);
+
+			echo json_encode($results);
+			die;
+		}
+	}
+	
     public function defaultvalues_view($table_name) {
 		//ONLY LOGGED USERS CAN ACCES TO THIS CONTROLLER
 		if (!$this->ion_auth->logged_in())
@@ -866,6 +898,14 @@ class Main extends CI_Controller {
 			$default_values["table_name"]=$table_name;
 			$default_values["express_form"]=true;
 			$this->load->view('defaultvalues_view.php',$default_values); 
+		}
+	}
+
+     protected function set_dialogforms($grocery_crud) {
+		$userid = $this->session->userdata('user_id');
+		$user_fialogforms = $this->inventory_model->get_user_dialogforms($userid);
+		if ($user_fialogforms == "n") {
+			$grocery_crud->unset_dialogforms();
 		}
 	}
     
@@ -1027,10 +1067,6 @@ class Main extends CI_Controller {
     return '<input id="field-quantityInStock" type="text" maxlength="6" value="1" name="quantityInStock">';
     }
     
-    function edit_field_callback_creationUserId($value, $primary_key){
-     return '<input type="text" maxlength="11" class="numeric" value="' . $value  . '" name="creationUserId" id="field-creationUserId" readonly> ';
-    }
-    
 	function add_field_callback_entryDate(){  
 	  $data= date('d/m/Y H:i:s', time());
 	  return '<input type="text" class="datetime-input hasDatepicker" maxlength="19" value="'.$data.'" name="entryDate" id="field-entryDate" readonly>';    
@@ -1087,11 +1123,9 @@ class Main extends CI_Controller {
 		$data= date('d/m/Y H:i:s', time());
 		$post_array['last_update'] = $data;
 		
-		$post_array['lastupdateUserId'] = $this->session->userdata('session_id');
+		$post_array['lastupdateUserId'] = $this->session->userdata('user_id');
 		return $post_array;
-		//TODO:
-		//return from_date_to_unix($post_array);
-    }
+	}
     
     //UPDATE AUTOMATIC FIELDS BEFORE UPDATE
     // ONLY CALLED BY USERS NOT ADMINS!
@@ -1165,19 +1199,25 @@ class Main extends CI_Controller {
         //Camps last update no editable i automàtic        
         $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
         
-        //USER ID
-        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
-        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
-		
         //UPDATE AUTOMATIC FIELDS
 		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
 		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+				
+        //USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
 		
-		$this->grocery_crud->unset_add_fields('last_update');
+        $this->grocery_crud->unset_add_fields('last_update');
 		
 		$this->set_theme($this->grocery_crud);
+		$this->set_dialogforms($this->grocery_crud);
+
 		
         $output = $this->grocery_crud->render();
            
@@ -1238,21 +1278,26 @@ class Main extends CI_Controller {
         //Camps last update no editable i automàtic        
         $this->grocery_crud->callback_edit_field('last_update',array($this,'edit_field_callback_lastupdate'));
         
-        //USER ID
-        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
-        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
-		
         //UPDATE AUTOMATIC FIELDS
 		$this->grocery_crud->callback_before_insert(array($this,'before_insert_object_callback'));
 		$this->grocery_crud->callback_before_update(array($this,'before_update_object_callback'));
+		
+		//USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
+        $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
 		
 		$this->grocery_crud->unset_add_fields('last_update');
 		
 		$this->grocery_crud->set_relation('barcodeId','barcode','{name}',array('markedForDeletion' => 'n'));
 		
 		$this->set_theme($this->grocery_crud);
+		$this->set_dialogforms($this->grocery_crud);
 		
         $output = $this->grocery_crud->render();
            
@@ -1326,13 +1371,18 @@ class Main extends CI_Controller {
         
    		$this->grocery_crud->unset_add_fields('last_update');
    		
-   		//USER ID
+   		//USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
         
         $this->set_theme($this->grocery_crud);
+        $this->set_dialogforms($this->grocery_crud);
         
         $output = $this->grocery_crud->render();
            
@@ -1408,13 +1458,18 @@ class Main extends CI_Controller {
         $this->grocery_crud->unset_add_fields('last_update');
         
    		
-   		//USER ID
+   		//USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
         
         $this->set_theme($this->grocery_crud);
+        $this->set_dialogforms($this->grocery_crud);
                    
         $output = $this->grocery_crud->render();
         
@@ -1481,14 +1536,18 @@ public function material()
         
    		$this->grocery_crud->unset_add_fields('last_update');
    		
-   		
-   		//USER ID
+   		//USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
         
         $this->set_theme($this->grocery_crud);
+        $this->set_dialogforms($this->grocery_crud);
         
         $output = $this->grocery_crud->render();
 
@@ -1548,14 +1607,18 @@ public function brand()
         
    		$this->grocery_crud->unset_add_fields('last_update');
    		
-   		
-   		//USER ID
+   		//USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
         
         $this->set_theme($this->grocery_crud);
+        $this->set_dialogforms($this->grocery_crud);
         
         $output = $this->grocery_crud->render();
 
@@ -1621,14 +1684,18 @@ public function model()
         
    		$this->grocery_crud->unset_add_fields('last_update');
    		
-   		
-   		//USER ID
+   		//USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
         
         $this->set_theme($this->grocery_crud);
+        $this->set_dialogforms($this->grocery_crud);
         
         $output = $this->grocery_crud->render();
 
@@ -1643,6 +1710,7 @@ public function model()
         $this->load->view('material_view.php',$output); 
         $this->load->view('include/footer');                            
 }	
+
 public function provider()
 {
 	   if (!$this->ion_auth->logged_in()) {
@@ -1687,14 +1755,18 @@ public function provider()
         
    		$this->grocery_crud->unset_add_fields('last_update');
    		
-   		
-   		//USER ID
+   		//USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
-        
-        //LAST UPDATE USER ID
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
         
        $this->set_theme($this->grocery_crud); 
+       $this->set_dialogforms($this->grocery_crud);
                                                           
        $output = $this->grocery_crud->render(); 
                                                    
@@ -1754,12 +1826,18 @@ public function money_source()
 		//USER ID
         $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
         
-        //LAST UPDATE USER ID
+        //USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_insert_object_callback
+        $this->grocery_crud->set_relation('creationUserId','users','{username}',array('active' => '1'));
+        $this->grocery_crud->set_default_value($this->current_table,'creationUserId',$this->session->userdata('user_id'));
+
+        //LAST UPDATE USER ID: show only active users and by default select current userid. IMPORTANT: Field is not editable, always forced to current userid by before_update_object_callback
         $this->grocery_crud->set_relation('lastupdateUserId','users','{username}',array('active' => '1'));
-		        
-   		$this->grocery_crud->unset_add_fields('last_update');
+        $this->grocery_crud->set_default_value($this->current_table,'lastupdateUserId',$this->session->userdata('user_id'));
+        
+        $this->grocery_crud->unset_dropdowndetails("creationUserId","lastupdateUserId");
    		
    		$this->set_theme($this->grocery_crud);
+   		$this->set_dialogforms($this->grocery_crud);
                                                            
         $output = $this->grocery_crud->render();
                 
@@ -1866,6 +1944,7 @@ public function users() {
 		$this->grocery_crud->callback_edit_field('password',array($this,'edit_field_callback_password'));
 		
 		$this->set_theme($this->grocery_crud);
+		$this->set_dialogforms($this->grocery_crud);
         
         try {
 			
@@ -1950,6 +2029,7 @@ public function groups(){
        $this->grocery_crud->set_relation_n_n('users', 'users_groups','users', 'user_id', 'id', 'username');
        
        $this->set_theme($this->grocery_crud);
+       $this->set_dialogforms($this->grocery_crud);
             
        $output = $this->grocery_crud->render();
        
@@ -1973,7 +2053,7 @@ protected function set_common_columns_name()
        $this->grocery_crud->display_as('entryDate',lang('entryDate'));       
        $this->grocery_crud->display_as('manualEntryDate',lang('manualEntryDate'));       
        $this->grocery_crud->display_as('last_update',lang('last_update')); 
-       $this->grocery_crud->display_as('manualLast update',lang('manual_last_update')); 
+       $this->grocery_crud->display_as('manualLast_update',lang('manual_last_update')); 
        $this->grocery_crud->display_as('creationUserId',lang('creationUserId'));
        $this->grocery_crud->display_as('lastupdateUserId',lang('lastupdateUserId'));  
        $this->grocery_crud->display_as('markedForDeletion',lang('markedForDeletion'));
@@ -2006,6 +2086,7 @@ public function devices() {
        $this->set_common_columns_name();
        
        $this->set_theme($this->grocery_crud);
+       $this->set_dialogforms($this->grocery_crud);
 
        $output = $this->grocery_crud->render();
        

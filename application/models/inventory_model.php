@@ -26,6 +26,22 @@ class inventory_Model  extends CI_Model  {
 		} 	
 		return false;
 	}
+	
+	function get_last_added_value($table_name,$primary_key=null) {
+		$primary_key_field_name;
+		if ($primary_key==null)
+			$primary_key_field_name=$this->get_primary_key($table_name);
+		else
+			$primary_key_field_name=$primary_key;
+		
+		$this->db->select($primary_key_field_name);
+		$this->db->order_by($primary_key_field_name, "desc");
+		$this->db->where("markedForDeletion", "n");
+		$query = $this->db->get($table_name);
+		if ($query->num_rows() != 0)
+			return $query->row()->$primary_key_field_name;
+		return false;
+	}
     
     function get_dropdown_values($table_name,$field_name,$primary_key=null,$order_by="asc") {
 		
@@ -37,6 +53,7 @@ class inventory_Model  extends CI_Model  {
 		
 		$this->db->select("$primary_key_field_name,$field_name");
 		$this->db->order_by($field_name, $order_by); 
+		$this->db->where("markedForDeletion", "n"); 
 		$query = $this->db->get($table_name);
 		if ($query->num_rows() != 0)
 			return $query->result();
@@ -67,6 +84,16 @@ class inventory_Model  extends CI_Model  {
 		$query = $this->db->get('user_preferences');
 		if ($query->num_rows() > 0)
 			return $query->row()->theme;
+		else
+			return false;
+	}
+	
+	function get_user_dialogforms($userid){
+		$this->db->select('dialogforms');
+		$this->db->where('userId',$userid);
+		$query = $this->db->get('user_preferences');
+		if ($query->num_rows() > 0)
+			return $query->row()->dialogforms;
 		else
 			return false;
 	}
@@ -103,6 +130,18 @@ class inventory_Model  extends CI_Model  {
 			return "";
 
 	}
+	
+	function get_username_from_userid($userid){
+		$this->db->select('username');
+		$this->db->where('id',$userid);
+		$query = $this->db->get('users');
+		if ($query->num_rows() > 0)
+			return $query->row()->username;
+		else
+			return "";
+
+	}
+	
 
 	function get_externalIdInfoByInventoryObjectId($inventory_objectid)	{
 		$this->db->select('externalID,externalIDType');

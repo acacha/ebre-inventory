@@ -1,12 +1,5 @@
 <script type="text/javascript" id="defaultvalues_view_script">
 	
-var load_css_file = function(css_file) {
-	if ($('head').find('link[href="'+css_file+'"]').length == 0) {
-		$('head').append($('<link/>').attr("type","text/css")
-				.attr("rel","stylesheet").attr("href",css_file));
-	}
-};
-
 var ei_noLoadfnOpenEditForm = function(this_element){
 
 	var href_url = this_element.attr("href");
@@ -57,24 +50,37 @@ var ei_noLoadfnOpenEditForm = function(this_element){
 
 var set_form_default_values = function(){
 	
-	//MARKED FOR DELETION
+	//MARKED FOR DELETION translation
 	if (document.getElementById('field-<?php echo $table_name?>-markedForDeletion') != null) {
 		var mfd=document.getElementById("field-<?php echo $table_name?>-markedForDeletion");
 		if (mfd.value == "") {
 			mfd.value = '<?php echo $defaultfieldmarkedfordeletion ?>';
 		}
 		//TRANSLATE MARKED FOR DELETION:
+
 		mfd.options[1].text='<?php echo $no_translated ?>';
 		mfd.options[2].text='<?php echo $yes_translated ?>';
 		$('#field-<?php echo $table_name?>-markedForDeletion').trigger('liszt:updated');
 	}
 	
-	//PRESERVATION STATE
+	//DISABLE markedForDeletionDate if markedForDeletion is no
+	var $markedForDeletion = $('#field-<?php echo $table_name?>-markedForDeletion');
+	var $markedForDeletionDate = $('#field-<?php echo $table_name?>-markedForDeletionDate');
+	$markedForDeletion.change(function () {
+		if ($markedForDeletion.val() == 'y') {
+			$markedForDeletionDate.removeAttr('disabled'); 
+		} else {
+			$markedForDeletionDate.attr('disabled', 'disabled').val('');
+		}
+	}).trigger('change'); // added trigger to calculate initial state
+	
+	/****************************
+	* INVENTORY OBJECT FORM *
+	****************************/
+	
+	//PRESERVATION STATE TRANSLATION
 	if (document.getElementById('field-<?php echo $table_name?>-preservationState') != null) {
 		var ps = document.getElementById('field-<?php echo $table_name?>-preservationState');
-		if (ps.value == "") {
-			ps.value = '<?php echo $defaultfieldpreservationstate ?>';
-		}
 		//TRANSLATE PRESERVATION STATE:
 		ps.options[1].text='<?php echo $good_translated ?>';
 		ps.options[2].text='<?php echo $regular_translated ?>';
@@ -82,30 +88,32 @@ var set_form_default_values = function(){
 		$('#field-<?php echo $table_name?>-preservationState').trigger('liszt:updated');
 	}
 	
+	/****************************
+	* END INVENTORY OBJECT FORM *
+	****************************/
+	
 
 	/************************
 	* USER PREFERENCES FORM *
 	*************************/
-	//THEME
-	if (document.getElementById('field-<?php echo $table_name?>-theme') != null) {
-		var theme = document.getElementById('field-<?php echo $table_name?>-theme');
-		if (theme.value == "") {
-			theme.value = '<?php echo $defaultfieldTheme ?>';	 
-		}
-		$('#field-<?php echo $table_name?>-theme').trigger('liszt:updated');
-	}
 	
-	//LANGUAGE
+	//LANGUAGE translations
 	if (document.getElementById('field-<?php echo $table_name?>-language') != null) {
 		var language = document.getElementById('field-<?php echo $table_name?>-language');
-		if (language.value == "") {
-			language.value = '<?php echo $defaultfieldLanguage ?>';
-		}
 		//TRANSLATE LANGUAGE:
 		language.options[1].text='<?php echo $catalan_translated ?>';
 		language.options[2].text='<?php echo $spanish_translated ?>';
 		language.options[3].text='<?php echo $english_translated ?>';
 		$('#field-<?php echo $table_name?>-language').trigger('liszt:updated');
+	}
+	
+	//DialogForms translations
+	if (document.getElementById('field-<?php echo $table_name?>-dialogforms') != null) {
+		var dialogforms = document.getElementById('field-<?php echo $table_name?>-dialogforms');
+		//TRANSLATE LANGUAGE:
+		dialogforms.options[1].text='<?php echo $no_translated ?>';
+		dialogforms.options[2].text='<?php echo $yes_translated ?>';
+		$('#field-<?php echo $table_name?>-dialogforms').trigger('liszt:updated');
 	}
 	
 	/****************************

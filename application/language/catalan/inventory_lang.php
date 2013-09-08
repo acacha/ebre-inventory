@@ -62,6 +62,7 @@ $lang['id'] = 'Id';
 $lang['userId'] = "Id usuari";
 $lang['theme'] = 'Tema';
 $lang['barcodeId'] = 'Tipus de codi de barres';
+$lang['dialogforms'] = 'Activar formularis en mode diàleg';
 
 
 $lang['code'] = 'Codi';
