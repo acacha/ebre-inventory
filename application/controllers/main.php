@@ -518,6 +518,8 @@ class Main extends CI_Controller {
                         
         //COMMON_COLUMNS               
         $this->set_common_columns_name();
+        
+        
 
         //ESPECIFIC COLUMNS                                            
         $this->grocery_crud->display_as('userId',lang('userId'));
@@ -534,7 +536,7 @@ class Main extends CI_Controller {
         $this->grocery_crud->set_relation('userId','users','{username}');
         
         $this->grocery_crud->unset_dropdowndetails("userId");
-
+		$this->grocery_crud->set_default_value($this->current_table,'userId',$this->session->userdata('username'));
 		
 		//ENTRY DATE
 		//DEFAULT VALUE=NOW. ONLY WHEN ADDING
