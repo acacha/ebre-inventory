@@ -665,7 +665,8 @@ class Main extends CI_Controller {
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
-			redirect( $this->login_page . "?redirect=" . urlencode(uri_string(current_url)), 'refresh');
+			$current_url="";
+			redirect( $this->login_page . "?redirect=" . urlencode(uri_string($current_url)), 'refresh');
 		}
 		
 		//CHECK IF USER IS READONLY --> unset add, edit & delete actions
@@ -827,7 +828,7 @@ class Main extends CI_Controller {
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
-			redirect( $this->login_page . "?redirect=" . urlencode(uri_string(current_url)), 'refresh');
+			redirect( $this->login_page . "?redirect=" . urlencode(uri_string($current_url)), 'refresh');
 		}
 		//ONLY RESPONSE TO POST AJAX PETITIONS		
 		if ($this->_is_ajax()) {
@@ -851,7 +852,7 @@ class Main extends CI_Controller {
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
-			redirect( $this->login_page . "?redirect=" . urlencode(uri_string(current_url)), 'refresh');
+			redirect( $this->login_page . "?redirect=" . urlencode(uri_string($current_url)), 'refresh');
 		}
 		//ONLY RESPONSE TO POST AJAX PETITIONS		
 		if ($this->_is_ajax()) {
@@ -875,7 +876,7 @@ class Main extends CI_Controller {
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
-			redirect( $this->login_page . "?redirect=" . urlencode(uri_string(current_url)), 'refresh');
+			redirect( $this->login_page . "?redirect=" . urlencode(uri_string($current_url)), 'refresh');
 		}
 		
 		//AJAX & POST
